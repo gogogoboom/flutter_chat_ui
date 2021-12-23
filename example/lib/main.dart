@@ -65,7 +65,7 @@ class _ChatPageState extends State<ChatPage> {
                   },
                   child: const Align(
                     alignment: Alignment.centerLeft,
-                    child: Text('Photo'),
+                    child: Text('Photo2'),
                   ),
                 ),
                 TextButton(
