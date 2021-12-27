@@ -21,9 +21,9 @@ class AudioButton extends StatelessWidget {
       margin: const EdgeInsets.only(right: 16),
       width: 24,
       child: IconButton(
-        icon: InheritedChatTheme.of(context).theme.attachmentButtonIcon != null
-            ? InheritedChatTheme.of(context).theme.attachmentButtonIcon!
-            : Icon(Icons.keyboard_voice_outlined, color: Colors.white,),
+        icon: InheritedChatTheme.of(context).theme.audioButtonIcon != null
+            ? InheritedChatTheme.of(context).theme.audioButtonIcon!
+            : const Icon(Icons.keyboard_voice_outlined, color: Colors.white,),
         onPressed: onPressed,
         padding: EdgeInsets.zero,
         tooltip:

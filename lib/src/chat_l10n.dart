@@ -7,6 +7,7 @@ abstract class ChatL10n {
   /// Creates a new chat l10n based on provided copy
   const ChatL10n({
     required this.attachmentButtonAccessibilityLabel,
+    required this.audioButtonAccessibilityLabel,
     required this.emptyChatPlaceholder,
     required this.fileButtonAccessibilityLabel,
     required this.inputPlaceholder,
@@ -15,6 +16,8 @@ abstract class ChatL10n {
 
   /// Accessibility label (hint) for the attachment button
   final String attachmentButtonAccessibilityLabel;
+
+  final String audioButtonAccessibilityLabel;
 
   /// Placeholder when there are no messages
   final String emptyChatPlaceholder;
@@ -37,6 +40,7 @@ class ChatL10nEn extends ChatL10n {
   /// which extends [ChatL10n]
   const ChatL10nEn({
     String attachmentButtonAccessibilityLabel = 'Send media',
+    String audioButtonAccessibilityLabel = 'Send audio',
     String emptyChatPlaceholder = 'No messages here yet',
     String fileButtonAccessibilityLabel = 'File',
     String inputPlaceholder = 'Message',
@@ -44,6 +48,7 @@ class ChatL10nEn extends ChatL10n {
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
+          audioButtonAccessibilityLabel: audioButtonAccessibilityLabel,
           emptyChatPlaceholder: emptyChatPlaceholder,
           fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
           inputPlaceholder: inputPlaceholder,
@@ -66,6 +71,7 @@ class ChatL10nEs extends ChatL10n {
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
+          audioButtonAccessibilityLabel: attachmentButtonAccessibilityLabel,
           emptyChatPlaceholder: emptyChatPlaceholder,
           fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
           inputPlaceholder: inputPlaceholder,
@@ -88,6 +94,7 @@ class ChatL10nKo extends ChatL10n {
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
+          audioButtonAccessibilityLabel: attachmentButtonAccessibilityLabel,
           emptyChatPlaceholder: emptyChatPlaceholder,
           fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
           inputPlaceholder: inputPlaceholder,
@@ -110,6 +117,7 @@ class ChatL10nPl extends ChatL10n {
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
+          audioButtonAccessibilityLabel: attachmentButtonAccessibilityLabel,
           emptyChatPlaceholder: emptyChatPlaceholder,
           fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
           inputPlaceholder: inputPlaceholder,
@@ -132,6 +140,7 @@ class ChatL10nPt extends ChatL10n {
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
+          audioButtonAccessibilityLabel: attachmentButtonAccessibilityLabel,
           emptyChatPlaceholder: emptyChatPlaceholder,
           fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
           inputPlaceholder: inputPlaceholder,
@@ -154,6 +163,7 @@ class ChatL10nRu extends ChatL10n {
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
+          audioButtonAccessibilityLabel: attachmentButtonAccessibilityLabel,
           emptyChatPlaceholder: emptyChatPlaceholder,
           fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
           inputPlaceholder: inputPlaceholder,
@@ -176,6 +186,7 @@ class ChatL10nTr extends ChatL10n {
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
+          audioButtonAccessibilityLabel: attachmentButtonAccessibilityLabel,
           emptyChatPlaceholder: emptyChatPlaceholder,
           fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
           inputPlaceholder: inputPlaceholder,
@@ -198,6 +209,7 @@ class ChatL10nUk extends ChatL10n {
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
+          audioButtonAccessibilityLabel: attachmentButtonAccessibilityLabel,
           emptyChatPlaceholder: emptyChatPlaceholder,
           fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
           inputPlaceholder: inputPlaceholder,
@@ -213,6 +225,7 @@ class ChatL10nZhCN extends ChatL10n {
   /// which extends [ChatL10n]
   const ChatL10nZhCN({
     String attachmentButtonAccessibilityLabel = '发送媒体文件',
+    String audioButtonAccessibilityLabel = '发送语音',
     String emptyChatPlaceholder = '暂无消息',
     String fileButtonAccessibilityLabel = '文件',
     String inputPlaceholder = '输入消息',
@@ -220,6 +233,7 @@ class ChatL10nZhCN extends ChatL10n {
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
+          audioButtonAccessibilityLabel: audioButtonAccessibilityLabel,
           emptyChatPlaceholder: emptyChatPlaceholder,
           fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
           inputPlaceholder: inputPlaceholder,
@@ -235,6 +249,7 @@ class ChatL10nZhTW extends ChatL10n {
   /// which extends [ChatL10n]
   const ChatL10nZhTW({
     String attachmentButtonAccessibilityLabel = '傳送媒體',
+    String audioButtonAccessibilityLabel = '傳送声音',
     String emptyChatPlaceholder = '還沒有訊息在這裡',
     String fileButtonAccessibilityLabel = '檔案',
     String inputPlaceholder = '輸入訊息',
@@ -242,6 +257,7 @@ class ChatL10nZhTW extends ChatL10n {
   }) : super(
           attachmentButtonAccessibilityLabel:
               attachmentButtonAccessibilityLabel,
+          audioButtonAccessibilityLabel: audioButtonAccessibilityLabel,
           emptyChatPlaceholder: emptyChatPlaceholder,
           fileButtonAccessibilityLabel: fileButtonAccessibilityLabel,
           inputPlaceholder: inputPlaceholder,

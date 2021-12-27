@@ -10,7 +10,7 @@ import 'package:keyboard_utils/keyboard_aware/keyboard_aware.dart';
 
 import '../models/send_button_visibility_mode.dart';
 import 'attachment_button.dart';
-import 'audio_button.dart';
+import 'audio_gesture_widget.dart';
 import 'inherited_chat_theme.dart';
 import 'inherited_l10n.dart';
 import 'more_button.dart';
@@ -34,6 +34,7 @@ class Input extends StatefulWidget {
     this.onAttachmentPressed,
     required this.onSendPressed,
     this.onTextChanged,
+    this.onAudioHanding,
     this.onTextFieldTap,
     required this.sendButtonVisibilityMode,
   }) : super(key: key);
@@ -53,6 +54,8 @@ class Input extends StatefulWidget {
 
   /// Will be called whenever the text inside [TextField] changes
   final void Function(String)? onTextChanged;
+
+  final void Function(bool)? onAudioHanding;
 
   /// Will be called on [TextField] tap
   final void Function()? onTextFieldTap;
@@ -109,235 +112,223 @@ class _InputState extends State<Input> {
   }
 
   Widget _leftWidget() {
-    if (widget.isAttachmentUploading == true) {
-      return Container(
-        height: 24,
-        margin: const EdgeInsets.only(right: 16),
-        width: 24,
-        child: CircularProgressIndicator(
-          backgroundColor: Colors.transparent,
-          strokeWidth: 1.5,
-          valueColor: AlwaysStoppedAnimation<Color>(
-            InheritedChatTheme.of(context).theme.inputTextColor,
-          ),
-        ),
-      );
-    } else {
-      return AudioButton(onPressed: widget.onAttachmentPressed);
-    }
+    return IconButton(
+        onPressed: () => setState(() {
+              _doAreaTypeChange(AreaType.audio);
+            }),
+        icon: Icon(
+          areaType != AreaType.audio
+              ? Icons.keyboard_voice_outlined
+              : Icons.keyboard,
+          color: Colors.white,
+        ));
   }
 
   @override
   Widget build(BuildContext context) {
     final _query = MediaQuery.of(context);
 
-    return KeyboardVisibilityBuilder(
-        builder: (c, isKeyboardVisible) {
-          if(isKeyboardVisible) {
-            areaType = AreaType.input;
-          }
-          return GestureDetector(
-            onTap: () => _inputFocusNode.requestFocus(),
-            child: Shortcuts(
-              shortcuts: {
-                LogicalKeySet(LogicalKeyboardKey.enter):
-                const SendMessageIntent(),
-                LogicalKeySet(
-                    LogicalKeyboardKey.enter, LogicalKeyboardKey.alt):
+    return KeyboardVisibilityBuilder(builder: (c, isKeyboardVisible) {
+      if (isKeyboardVisible) {
+        areaType = AreaType.input;
+      }
+      return GestureDetector(
+        onTap: () => _inputFocusNode.requestFocus(),
+        child: Shortcuts(
+          shortcuts: {
+            LogicalKeySet(LogicalKeyboardKey.enter): const SendMessageIntent(),
+            LogicalKeySet(LogicalKeyboardKey.enter, LogicalKeyboardKey.alt):
                 const NewLineIntent(),
-                LogicalKeySet(
-                    LogicalKeyboardKey.enter, LogicalKeyboardKey.shift):
+            LogicalKeySet(LogicalKeyboardKey.enter, LogicalKeyboardKey.shift):
                 const NewLineIntent(),
-              },
-              child: Actions(
-                actions: {
-                  SendMessageIntent: CallbackAction<SendMessageIntent>(
-                    onInvoke: (SendMessageIntent intent) =>
-                        _handleSendPressed(),
-                  ),
-                  NewLineIntent: CallbackAction<NewLineIntent>(
-                    onInvoke: (NewLineIntent intent) {
-                      final _newValue = '${_textController.text}\r\n';
-                      _textController.value = TextEditingValue(
-                        text: _newValue,
-                        selection: TextSelection.fromPosition(
-                          TextPosition(offset: _newValue.length),
-                        ),
-                      );
-                    },
-                  ),
+          },
+          child: Actions(
+            actions: {
+              SendMessageIntent: CallbackAction<SendMessageIntent>(
+                onInvoke: (SendMessageIntent intent) => _handleSendPressed(),
+              ),
+              NewLineIntent: CallbackAction<NewLineIntent>(
+                onInvoke: (NewLineIntent intent) {
+                  final _newValue = '${_textController.text}\r\n';
+                  _textController.value = TextEditingValue(
+                    text: _newValue,
+                    selection: TextSelection.fromPosition(
+                      TextPosition(offset: _newValue.length),
+                    ),
+                  );
                 },
-                child: Focus(
-                  autofocus: true,
-                  child: Padding(
-                    padding:
-                    InheritedChatTheme.of(context).theme.inputPadding,
-                    child: Material(
-                      borderRadius: InheritedChatTheme.of(context)
-                          .theme
-                          .inputBorderRadius,
-                      color: InheritedChatTheme.of(context)
-                          .theme
-                          .inputBackgroundColor,
-                      child: Container(
-                        padding: EdgeInsets.fromLTRB(
-                          24 + _query.padding.left,
-                          20,
-                          24 + _query.padding.right,
-                          20 +
-                              _query.viewInsets.bottom +
-                              _query.padding.bottom,
-                        ),
-                        child: Column(
+              ),
+            },
+            child: Focus(
+              autofocus: true,
+              child: Padding(
+                padding: InheritedChatTheme.of(context).theme.inputPadding,
+                child: Material(
+                  borderRadius:
+                      InheritedChatTheme.of(context).theme.inputBorderRadius,
+                  color:
+                      InheritedChatTheme.of(context).theme.inputBackgroundColor,
+                  child: Container(
+                    padding: EdgeInsets.fromLTRB(
+                      24 + _query.padding.left,
+                      20,
+                      24 + _query.padding.right,
+                      20 + _query.viewInsets.bottom + _query.padding.bottom,
+                    ),
+                    child: Column(
+                      children: [
+                        Row(
                           children: [
-                            Row(
-                              children: [
-                                if (widget.onAttachmentPressed != null)
-                                  _leftWidget(),
-                                Expanded(
-                                  child: TextField(
-                                    controller: _textController,
-                                    cursorColor:
-                                    InheritedChatTheme.of(context)
-                                        .theme
-                                        .inputTextCursorColor,
-                                    decoration: InheritedChatTheme.of(context)
-                                        .theme
-                                        .inputTextDecoration
-                                        .copyWith(
-                                      hintStyle:
-                                      InheritedChatTheme.of(context)
+                            if (widget.onAttachmentPressed != null)
+                              _leftWidget(),
+                            Expanded(
+                              child: areaType == AreaType.audio
+                                  ? AudioGestureWidget(
+                                      onAudioHanding: widget.onAudioHanding,
+                                    )
+                                  : TextField(
+                                      controller: _textController,
+                                      cursorColor:
+                                          InheritedChatTheme.of(context)
+                                              .theme
+                                              .inputTextCursorColor,
+                                      decoration: InheritedChatTheme.of(context)
+                                          .theme
+                                          .inputTextDecoration
+                                          .copyWith(
+                                            hintStyle:
+                                                InheritedChatTheme.of(context)
+                                                    .theme
+                                                    .inputTextStyle
+                                                    .copyWith(
+                                                      color:
+                                                          InheritedChatTheme.of(
+                                                                  context)
+                                                              .theme
+                                                              .inputTextColor
+                                                              .withOpacity(0.5),
+                                                    ),
+                                            hintText: InheritedL10n.of(context)
+                                                .l10n
+                                                .inputPlaceholder,
+                                          ),
+                                      focusNode: _inputFocusNode,
+                                      keyboardType: TextInputType.multiline,
+                                      maxLines: 5,
+                                      minLines: 1,
+                                      onChanged: widget.onTextChanged,
+                                      onTap: widget.onTextFieldTap,
+                                      style: InheritedChatTheme.of(context)
                                           .theme
                                           .inputTextStyle
                                           .copyWith(
-                                        color:
-                                        InheritedChatTheme.of(
-                                            context)
-                                            .theme
-                                            .inputTextColor
-                                            .withOpacity(0.5),
-                                      ),
-                                      hintText: InheritedL10n.of(context)
-                                          .l10n
-                                          .inputPlaceholder,
+                                            color:
+                                                InheritedChatTheme.of(context)
+                                                    .theme
+                                                    .inputTextColor,
+                                          ),
+                                      textCapitalization:
+                                          TextCapitalization.sentences,
                                     ),
-                                    focusNode: _inputFocusNode,
-                                    keyboardType: TextInputType.multiline,
-                                    maxLines: 5,
-                                    minLines: 1,
-                                    onChanged: widget.onTextChanged,
-                                    onTap: widget.onTextFieldTap,
-                                    style: InheritedChatTheme.of(context)
-                                        .theme
-                                        .inputTextStyle
-                                        .copyWith(
-                                      color:
-                                      InheritedChatTheme.of(context)
-                                          .theme
-                                          .inputTextColor,
-                                    ),
-                                    textCapitalization:
-                                    TextCapitalization.sentences,
-                                  ),
-                                ),
-                                Text('keyboard ==> $isKeyboardVisible'),
-                                IconButton(
-                                    padding: EdgeInsets.zero,
-                                    onPressed: () => setState(() {
+                            ),
+                            IconButton(
+                                padding: EdgeInsets.zero,
+                                onPressed: () => setState(() {
                                       _doAreaTypeChange(AreaType.emoji);
                                     }),
-                                    icon: Icon(
-                                      areaType != AreaType.emoji
-                                      ? Icons.emoji_emotions_outlined : Icons.keyboard,
-                                      color: Colors.white,
-                                    )),
-                                Visibility(
-                                  visible: !_sendButtonVisible,
-                                  child: MoreButton(
-                                    onPressed: () => setState(() {
-                                      _doAreaTypeChange(AreaType.attachment);
-                                    }),
-                                  ),
-                                ),
-                                Visibility(
-                                  visible: _sendButtonVisible,
-                                  child: SendButton(
-                                    onPressed: _handleSendPressed,
-                                  ),
-                                ),
-                              ],
-                            ),
-                            KeyboardAware(
-                              builder: (context, keyboardConfig) {
-                                keyboardHeight = max(keyboardHeight, keyboardConfig.keyboardHeight);
-                                return Container();
-                              },
-                            ),
-                            Offstage(
-                              offstage: areaType != AreaType.emoji,
-                              child: SizedBox(
-                                height: keyboardHeight,
-                                child: EmojiPicker(
-                                    onEmojiSelected:
-                                        (Category category, Emoji emoji) {
-                                      // _onEmojiSelected(emoji);
-                                    },
-                                    // onBackspacePressed: _onBackspacePressed,
-                                    config: Config(
-                                        columns: 7,
-                                        // Issue: https://github.com/flutter/flutter/issues/28894
-                                        emojiSizeMax: 32 *
-                                            (Platform.isIOS ? 1.30 : 1.0),
-                                        verticalSpacing: 0,
-                                        horizontalSpacing: 0,
-                                        initCategory: Category.RECENT,
-                                        bgColor: Colors.transparent,
-                                        indicatorColor: Colors.blue,
-                                        iconColor: Colors.grey,
-                                        iconColorSelected: Colors.blue,
-                                        progressIndicatorColor: Colors.blue,
-                                        backspaceColor: Colors.blue,
-                                        showRecentsTab: true,
-                                        recentsLimit: 28,
-                                        noRecentsText: 'No Recents',
-                                        noRecentsStyle: const TextStyle(
-                                            fontSize: 20,
-                                            color: Colors.black26),
-                                        tabIndicatorAnimDuration:
-                                        kTabScrollDuration,
-                                        categoryIcons: const CategoryIcons(),
-                                        buttonMode: ButtonMode.MATERIAL)),
+                                icon: Icon(
+                                  areaType != AreaType.emoji
+                                      ? Icons.emoji_emotions_outlined
+                                      : Icons.keyboard,
+                                  color: Colors.white,
+                                )),
+                            Visibility(
+                              visible: !_sendButtonVisible,
+                              child: MoreButton(
+                                onPressed: () => setState(() {
+                                  _doAreaTypeChange(AreaType.attachment);
+                                }),
                               ),
                             ),
-                            Offstage(
-                              offstage: areaType != AreaType.attachment,
-                              child: SizedBox(
-                                height:keyboardHeight,
-                                child: Center(
-                                  child: Text('更多的区域'),
-                                ),
+                            Visibility(
+                              visible: _sendButtonVisible,
+                              child: SendButton(
+                                onPressed: _handleSendPressed,
                               ),
                             ),
                           ],
                         ),
-                      ),
+                        KeyboardAware(
+                          builder: (context, keyboardConfig) {
+                            keyboardHeight = max(
+                                keyboardHeight, keyboardConfig.keyboardHeight);
+                            return Container();
+                          },
+                        ),
+                        Offstage(
+                          offstage: areaType != AreaType.emoji,
+                          child: SizedBox(
+                            height: keyboardHeight,
+                            child: EmojiPicker(
+                                onEmojiSelected:
+                                    (Category category, Emoji emoji) {
+                                  // _onEmojiSelected(emoji);
+                                },
+                                // onBackspacePressed: _onBackspacePressed,
+                                config: Config(
+                                    columns: 7,
+                                    // Issue: https://github.com/flutter/flutter/issues/28894
+                                    emojiSizeMax:
+                                        32 * (Platform.isIOS ? 1.30 : 1.0),
+                                    verticalSpacing: 0,
+                                    horizontalSpacing: 0,
+                                    initCategory: Category.RECENT,
+                                    bgColor: Colors.transparent,
+                                    indicatorColor: Colors.blue,
+                                    iconColor: Colors.grey,
+                                    iconColorSelected: Colors.blue,
+                                    progressIndicatorColor: Colors.blue,
+                                    backspaceColor: Colors.blue,
+                                    showRecentsTab: true,
+                                    recentsLimit: 28,
+                                    noRecentsText: 'No Recents',
+                                    noRecentsStyle: const TextStyle(
+                                        fontSize: 20, color: Colors.black26),
+                                    tabIndicatorAnimDuration:
+                                        kTabScrollDuration,
+                                    categoryIcons: const CategoryIcons(),
+                                    buttonMode: ButtonMode.MATERIAL)),
+                          ),
+                        ),
+                        Offstage(
+                          offstage: areaType != AreaType.attachment,
+                          child: SizedBox(
+                            height: keyboardHeight,
+                            child: Center(
+                              child: Text('更多的区域'),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ),
               ),
             ),
-          );
-        });
+          ),
+        ),
+      );
+    });
   }
 
   ///1、与之前的相同。表情、附件和语音重复点击后弹出键盘，输入框获取焦点
   ///2、
   void _doAreaTypeChange(AreaType next) {
-    if(next == areaType) {
+    if (next == areaType) {
       _inputFocusNode.requestFocus();
-      // areaType = AreaType.input;
+      areaType = AreaType.input;
     } else {
-      switch(areaType) {
+      switch (areaType) {
         case AreaType.none:
           break;
         case AreaType.input:
@@ -353,7 +344,6 @@ class _InputState extends State<Input> {
       areaType = next;
     }
   }
-
 }
 
 enum AreaType {

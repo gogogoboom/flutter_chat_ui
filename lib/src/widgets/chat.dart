@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/src/widgets/audio_wave_widget.dart';
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view_gallery.dart';
@@ -238,6 +239,7 @@ class _ChatState extends State<Chat> {
   List<PreviewImage> _gallery = [];
   int _imageViewIndex = 0;
   bool _isImageViewVisible = false;
+  bool _isAudioHanding = false;
 
   @override
   void initState() {
@@ -425,6 +427,7 @@ class _ChatState extends State<Chat> {
         child: InheritedL10n(
           l10n: widget.l10n,
           child: Stack(
+            alignment: Alignment.center,
             children: [
               Container(
                 color: widget.theme.backgroundColor,
@@ -463,6 +466,12 @@ class _ChatState extends State<Chat> {
                           onSendPressed: widget.onSendPressed,
                           onTextChanged: widget.onTextChanged,
                           onTextFieldTap: widget.onTextFieldTap,
+                          onAudioHanding: (bool audioHanding) {
+                            print('onAudioHanding => $audioHanding');
+                            setState(() {
+                              _isAudioHanding = audioHanding;
+                            });
+                          },
                           sendButtonVisibilityMode:
                               widget.sendButtonVisibilityMode,
                         ),
@@ -470,6 +479,9 @@ class _ChatState extends State<Chat> {
                 ),
               ),
               if (_isImageViewVisible) _imageGalleryBuilder(),
+              Visibility(
+                  visible: _isAudioHanding,
+                  child: const AudioWaveWidget())
             ],
           ),
         ),

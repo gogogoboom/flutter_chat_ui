@@ -188,6 +188,7 @@ class _ChatPageState extends State<ChatPage> {
         bottom: false,
         child: Chat(
           messages: _messages,
+          theme: DefaultChatTheme(),
           onAttachmentPressed: _handleAtachmentPressed,
           onMessageTap: _handleMessageTap,
           onPreviewDataFetched: _handlePreviewDataFetched,
