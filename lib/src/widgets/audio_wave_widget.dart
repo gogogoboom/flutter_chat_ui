@@ -27,11 +27,18 @@ class _AudioWaveState extends State<AudioWaveWidget> {
     widget.recorder?.onProgress?.listen((event) {
       double amplitude = ((event.decibels?.toDouble() ?? 0) / 100) * 2;
       _controller.setAmplitude(min(amplitude, 1));
-      setState(() {
-        duration = event.duration;
-      });
+      if (mounted) {
+        setState(() {
+          duration = event.duration;
+        });
+      }
     });
     super.initState();
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
   }
 
   @override
