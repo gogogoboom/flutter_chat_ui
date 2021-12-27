@@ -1,10 +1,14 @@
+import 'dart:io';
 import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/src/widgets/audio_wave_widget.dart';
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart';
 import 'package:photo_view/photo_view_gallery.dart';
+
 import '../chat_l10n.dart';
 import '../chat_theme.dart';
 import '../conditional/conditional.dart';
@@ -57,6 +61,7 @@ class Chat extends StatefulWidget {
     required this.onSendPressed,
     this.onTextChanged,
     this.onTextFieldTap,
+    this.onAudioCompleted,
     this.scrollPhysics,
     this.sendButtonVisibilityMode = SendButtonVisibilityMode.editing,
     this.showUserAvatars = false,
@@ -191,6 +196,8 @@ class Chat extends StatefulWidget {
   /// See [Input.onTextFieldTap]
   final void Function()? onTextFieldTap;
 
+  final void Function(File)? onAudioCompleted;
+
   /// See [ChatList.scrollPhysics]
   final ScrollPhysics? scrollPhysics;
 
@@ -240,6 +247,8 @@ class _ChatState extends State<Chat> {
   int _imageViewIndex = 0;
   bool _isImageViewVisible = false;
   bool _isAudioHanding = false;
+  bool _isOverflow = false;
+  final FlutterSoundRecorder _record = FlutterSoundRecorder();
 
   @override
   void initState() {
@@ -466,14 +475,17 @@ class _ChatState extends State<Chat> {
                           onSendPressed: widget.onSendPressed,
                           onTextChanged: widget.onTextChanged,
                           onTextFieldTap: widget.onTextFieldTap,
-                          onAudioHanding: (bool audioHanding) {
-                            print('onAudioHanding => $audioHanding');
+                          onAudioHanding: (bool audioHanding, bool isOverflow) {
+                            print('onAudioHanding => $isOverflow');
                             setState(() {
                               _isAudioHanding = audioHanding;
+                              _isOverflow = isOverflow;
                             });
                           },
                           sendButtonVisibilityMode:
                               widget.sendButtonVisibilityMode,
+                          recorder: _record,
+                          onAudioCompleted: widget.onAudioCompleted,
                         ),
                   ],
                 ),
@@ -481,7 +493,15 @@ class _ChatState extends State<Chat> {
               if (_isImageViewVisible) _imageGalleryBuilder(),
               Visibility(
                   visible: _isAudioHanding,
-                  child: const AudioWaveWidget())
+                  child: Container(
+                    color: Colors.black54,
+                    child: Center(
+                      child: AudioWaveWidget(
+                        recorder: _record,
+                        isOverflow: _isOverflow,
+                      ),
+                    ),
+                  ))
             ],
           ),
         ),

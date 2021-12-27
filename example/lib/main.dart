@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -193,9 +194,22 @@ class _ChatPageState extends State<ChatPage> {
           onMessageTap: _handleMessageTap,
           onPreviewDataFetched: _handlePreviewDataFetched,
           onSendPressed: _handleSendPressed,
+          onAudioCompleted: _handleSendAudio,
           user: _user,
         ),
       ),
     );
+  }
+
+  void _handleSendAudio(File file) {
+    final message = types.FileMessage(
+      author: _user,
+      createdAt: DateTime.now().millisecondsSinceEpoch,
+      id: const Uuid().v4(),
+      name: file.path,
+      size: file.lengthSync(),
+      uri: file.path,
+    );
+    _addMessage(message);
   }
 }
