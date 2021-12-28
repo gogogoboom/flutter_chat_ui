@@ -63,7 +63,7 @@ class Input extends StatefulWidget {
   /// Will be called on [TextField] tap
   final void Function()? onTextFieldTap;
 
-  final void Function(File)? onAudioCompleted;
+  final void Function(File, int sec)? onAudioCompleted;
 
   final FlutterSoundRecorder recorder;
 

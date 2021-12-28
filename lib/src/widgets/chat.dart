@@ -3,6 +3,7 @@ import 'dart:math';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/src/widgets/audio_controller.dart';
 import 'package:flutter_chat_ui/src/widgets/audio_wave_widget.dart';
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
 import 'package:flutter_sound/flutter_sound.dart';
@@ -196,7 +197,7 @@ class Chat extends StatefulWidget {
   /// See [Input.onTextFieldTap]
   final void Function()? onTextFieldTap;
 
-  final void Function(File)? onAudioCompleted;
+  final void Function(File, int sec)? onAudioCompleted;
 
   /// See [ChatList.scrollPhysics]
   final ScrollPhysics? scrollPhysics;
@@ -248,19 +249,26 @@ class _ChatState extends State<Chat> {
   bool _isImageViewVisible = false;
   bool _isAudioHanding = false;
   bool _isOverflow = false;
+  final FlutterSoundPlayer _mPlayer = FlutterSoundPlayer();
   final FlutterSoundRecorder _record = FlutterSoundRecorder();
+  final AudioController audioController = AudioController();
 
   @override
   void initState() {
     super.initState();
-
+    _mPlayer.openAudioSession().then((value) {});
     didUpdateWidget(widget);
+  }
+
+  @override
+  void dispose() {
+    _mPlayer.closeAudioSession();
+    super.dispose();
   }
 
   @override
   void didUpdateWidget(covariant Chat oldWidget) {
     super.didUpdateWidget(oldWidget);
-
     if (widget.messages.isNotEmpty) {
       final result = calculateChatMessages(
         widget.messages,
@@ -384,7 +392,6 @@ class _ChatState extends State<Chat> {
               widget.disableImageGallery != true) {
             _onImagePressed(tappedMessage);
           }
-
           widget.onMessageTap?.call(tappedMessage);
         },
         onPreviewDataFetched: _onPreviewDataFetched,
@@ -395,6 +402,7 @@ class _ChatState extends State<Chat> {
         showUserAvatars: widget.showUserAvatars,
         textMessageBuilder: widget.textMessageBuilder,
         usePreviewData: widget.usePreviewData,
+        mPlayer: _mPlayer, audioController: audioController,
       );
     }
   }
@@ -476,7 +484,6 @@ class _ChatState extends State<Chat> {
                           onTextChanged: widget.onTextChanged,
                           onTextFieldTap: widget.onTextFieldTap,
                           onAudioHanding: (bool audioHanding, bool isOverflow) {
-                            print('onAudioHanding => $isOverflow');
                             setState(() {
                               _isAudioHanding = audioHanding;
                               _isOverflow = isOverflow;

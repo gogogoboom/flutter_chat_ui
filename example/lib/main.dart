@@ -1,10 +1,12 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:intl/date_symbol_data_local.dart';
 import 'package:mime/mime.dart';
@@ -36,10 +38,16 @@ class ChatPage extends StatefulWidget {
 class _ChatPageState extends State<ChatPage> {
   List<types.Message> _messages = [];
   final _user = const types.User(id: '06c33e8b-e835-4736-80f4-63f44b66666c');
+  bool _mPlayerIsInited = false;
 
   @override
   void initState() {
     super.initState();
+    _myPlayer?.openAudioSession().then((value) {
+      setState(() {
+        _mPlayerIsInited = true;
+      });
+    });
     _loadMessages();
   }
 
@@ -140,10 +148,23 @@ class _ChatPageState extends State<ChatPage> {
     }
   }
 
+  FlutterSoundPlayer? _myPlayer = FlutterSoundPlayer();
+
   void _handleMessageTap(types.Message message) async {
     if (message is types.FileMessage) {
+      if(message.mimeType == 'audio/x-aac') {
+        return;
+      }
       await OpenFile.open(message.uri);
     }
+  }
+
+
+  @override
+  void dispose() {
+    _myPlayer?.closeAudioSession();
+    _myPlayer = null;
+    super.dispose();
   }
 
   void _handlePreviewDataFetched(
@@ -201,13 +222,14 @@ class _ChatPageState extends State<ChatPage> {
     );
   }
 
-  void _handleSendAudio(File file) {
+  void _handleSendAudio(File file, int sec) {
     final message = types.FileMessage(
       author: _user,
       createdAt: DateTime.now().millisecondsSinceEpoch,
       id: const Uuid().v4(),
       name: file.path,
-      size: file.lengthSync(),
+      size: sec,
+      mimeType: lookupMimeType(file.path),
       uri: file.path,
     );
     _addMessage(message);

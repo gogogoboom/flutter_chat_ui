@@ -1,5 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_chat_ui/flutter_chat_ui.dart';
+import 'package:flutter_chat_ui/src/widgets/audio_controller.dart';
+import 'package:flutter_sound/flutter_sound.dart';
 import '../models/emoji_enlargement_behavior.dart';
 import '../util.dart';
 import 'file_message.dart';
@@ -35,7 +38,7 @@ class Message extends StatelessWidget {
     required this.showStatus,
     required this.showUserAvatars,
     this.textMessageBuilder,
-    required this.usePreviewData,
+    required this.usePreviewData, required this.mPlayer, required this.audioController,
   }) : super(key: key);
 
   /// Customize the default bubble using this function. `child` is a content
@@ -108,6 +111,10 @@ class Message extends StatelessWidget {
 
   /// Show user avatars for received messages. Useful for a group chat.
   final bool showUserAvatars;
+
+  final FlutterSoundPlayer mPlayer;
+
+  final AudioController audioController;
 
   /// Build a text message inside predefined bubble.
   final Widget Function(
@@ -193,9 +200,17 @@ class Message extends StatelessWidget {
             : const SizedBox();
       case types.MessageType.file:
         final fileMessage = message as types.FileMessage;
-        return fileMessageBuilder != null
-            ? fileMessageBuilder!(fileMessage, messageWidth: messageWidth)
-            : FileMessage(message: fileMessage);
+        if(fileMessageBuilder != null) {
+          return fileMessageBuilder!(fileMessage, messageWidth: messageWidth);
+        }
+        switch(fileMessage.mimeType) {
+          case 'audio':
+          case 'acc':
+          case 'audio/x-aac':
+            return AudioMessage(message: fileMessage, showName: showName, audioController: audioController,);
+          default:
+            return FileMessage(message: fileMessage);
+        }
       case types.MessageType.image:
         final imageMessage = message as types.ImageMessage;
         return imageMessageBuilder != null
@@ -315,7 +330,15 @@ class Message extends StatelessWidget {
               children: [
                 GestureDetector(
                   onLongPress: () => onMessageLongPress?.call(message),
-                  onTap: () => onMessageTap?.call(message),
+                  onTap: () {
+                    if(message is types.FileMessage) {
+                      if((message as types.FileMessage).mimeType?.contains('audio') ?? false) {
+                        audioController.togglePlayer(message as types.FileMessage);
+                      }
+                    } else {
+                      onMessageTap?.call(message);
+                    }
+                  },
                   child: _bubbleBuilder(
                     context,
                     _borderRadius,

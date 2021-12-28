@@ -3,6 +3,7 @@ import 'dart:math';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:flutter_spinkit/flutter_spinkit.dart';
 import 'package:siri_wave/siri_wave.dart';
 
 class AudioWaveWidget extends StatefulWidget {
@@ -49,7 +50,7 @@ class _AudioWaveState extends State<AudioWaveWidget> {
       children: [
         AnimatedContainer(
           duration: const Duration(milliseconds: 50),
-          width: min(initWidth + duration.inSeconds * 5, 400),
+          width: min(initWidth + duration.inSeconds * 5, 320),
           child: ClipRRect(
             borderRadius: const BorderRadius.all(Radius.circular(12)),
             child: SiriWave(

@@ -12,7 +12,7 @@ import 'sound_recorder.dart';
 
 class AudioGestureWidget extends StatefulWidget {
   final Function(bool, bool)? onAudioHanding;
-  final Function(File)? onAudioCompleted;
+  final Function(File, int sec)? onAudioCompleted;
   final FlutterSoundRecorder recorder;
   const AudioGestureWidget({Key? key, this.onAudioHanding, required this.recorder, required this.onAudioCompleted}) : super(key: key);
 
@@ -24,7 +24,7 @@ class AudioGestureState extends State<AudioGestureWidget> {
 
   String buttonText = '按住 说话';
   Offset? position;
-  Duration? duration;
+  Duration? mDuration;
   late final SoundRecorder _mRecorder = SoundRecorder(widget.recorder);
   bool isOverflow = false;
 
@@ -53,7 +53,9 @@ class AudioGestureState extends State<AudioGestureWidget> {
         position = details.globalPosition;
         widget.onAudioHanding?.call(true, isOverflow);
         _mRecorder.toggleRecorder();
-        print('onLongPressDown ==> ${details.globalPosition}');
+        widget.recorder.onProgress?.listen((event) {
+          mDuration = event.duration;
+        });
       },
       onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
         if((position?.dy ?? 0) - details.globalPosition.dy > 100) {
@@ -78,7 +80,7 @@ class AudioGestureState extends State<AudioGestureWidget> {
         _mRecorder.toggleRecorder();
         String? filePath = _mRecorder.outFilePath;
         if(!isOverflow && (filePath?.isNotEmpty ?? false)) {
-          widget.onAudioCompleted?.call(File(filePath!));
+          widget.onAudioCompleted?.call(File(filePath!), mDuration?.inSeconds ?? 0);
         } else {
           print('取消发送');
         }
