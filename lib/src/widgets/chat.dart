@@ -72,6 +72,7 @@ class Chat extends StatefulWidget {
     this.timeFormat,
     this.usePreviewData = true,
     required this.user,
+    this.attachments,
   }) : super(key: key);
 
   /// See [Message.bubbleBuilder]
@@ -156,6 +157,8 @@ class Chat extends StatefulWidget {
 
   /// List of [types.Message] to render in the chat widget
   final List<types.Message> messages;
+
+  final List<ChatAttachment>? attachments;
 
   /// See [Input.onAttachmentPressed]
   final void Function()? onAttachmentPressed;
@@ -402,7 +405,8 @@ class _ChatState extends State<Chat> {
         showUserAvatars: widget.showUserAvatars,
         textMessageBuilder: widget.textMessageBuilder,
         usePreviewData: widget.usePreviewData,
-        mPlayer: _mPlayer, audioController: audioController,
+        mPlayer: _mPlayer,
+        audioController: audioController,
       );
     }
   }
@@ -493,6 +497,7 @@ class _ChatState extends State<Chat> {
                               widget.sendButtonVisibilityMode,
                           recorder: _record,
                           onAudioCompleted: widget.onAudioCompleted,
+                          attachments: widget.attachments,
                         ),
                   ],
                 ),

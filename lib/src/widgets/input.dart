@@ -1,5 +1,4 @@
 import 'dart:io';
-import 'dart:math';
 
 import 'package:emoji_picker_flutter/emoji_picker_flutter.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/services.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_keyboard_visibility/flutter_keyboard_visibility.dart';
 import 'package:flutter_sound/flutter_sound.dart';
-import 'package:keyboard_utils/keyboard_aware/keyboard_aware.dart';
 
 import '../models/send_button_visibility_mode.dart';
 import 'attachment_button.dart';
@@ -40,6 +38,7 @@ class Input extends StatefulWidget {
     required this.sendButtonVisibilityMode,
     required this.recorder,
     required this.onAudioCompleted,
+    required this.attachments,
   }) : super(key: key);
 
   /// See [AttachmentButton.onPressed]
@@ -67,6 +66,8 @@ class Input extends StatefulWidget {
 
   final FlutterSoundRecorder recorder;
 
+  final List<ChatAttachment>? attachments;
+
   /// Controls the visibility behavior of the [SendButton] based on the
   /// [TextField] state inside the [Input] widget.
   /// Defaults to [SendButtonVisibilityMode.editing].
@@ -82,7 +83,7 @@ class _InputState extends State<Input> {
   bool _sendButtonVisible = false;
   final _textController = TextEditingController();
   AreaType areaType = AreaType.none;
-  double keyboardHeight = 250;
+  double keyboardHeight = 200;
 
   @override
   void initState() {
@@ -267,13 +268,13 @@ class _InputState extends State<Input> {
                             ),
                           ],
                         ),
-                        KeyboardAware(
-                          builder: (context, keyboardConfig) {
-                            keyboardHeight = max(
-                                keyboardHeight, keyboardConfig.keyboardHeight);
-                            return Container();
-                          },
-                        ),
+                        // KeyboardAware(
+                        //   builder: (context, keyboardConfig) {
+                        //     keyboardHeight = max(
+                        //         keyboardHeight, keyboardConfig.keyboardHeight);
+                        //     return Container();
+                        //   },
+                        // ),
                         Offstage(
                           offstage: areaType != AreaType.emoji,
                           child: SizedBox(
@@ -313,8 +314,12 @@ class _InputState extends State<Input> {
                           offstage: areaType != AreaType.attachment,
                           child: SizedBox(
                             height: keyboardHeight,
-                            child: Center(
-                              child: Text('更多的区域'),
+                            child: GridView.builder(
+                              gridDelegate:
+                                  const SliverGridDelegateWithFixedCrossAxisCount(
+                                      crossAxisCount: 4, mainAxisSpacing: 10),
+                              itemCount: widget.attachments?.length ?? 0,
+                              itemBuilder: _attachmentItem,
                             ),
                           ),
                         ),
@@ -353,6 +358,47 @@ class _InputState extends State<Input> {
       areaType = next;
     }
   }
+
+  Widget _attachmentItem(BuildContext context, int index) {
+    var item = widget.attachments?[index];
+    return Column(
+      mainAxisSize: MainAxisSize.max,
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const SizedBox(
+          height: 12,
+        ),
+        Material(
+          color: Colors.white,
+          borderRadius: const BorderRadius.all(Radius.circular(8)),
+          child: InkWell(
+            borderRadius: const BorderRadius.all(Radius.circular(8)),
+            highlightColor: Colors.grey,
+            focusColor: Colors.grey,
+            onTap: item?.onClick.call,
+            child: Container(
+              padding: const EdgeInsets.all(12),
+              child: item?.icon,
+            ),
+          ),
+        ),
+        const SizedBox(
+          height: 4,
+        ),
+        item!.title
+      ],
+    );
+  }
+}
+
+class ChatAttachment {
+  final Widget icon;
+
+  final Widget title;
+
+  final VoidCallback onClick;
+
+  ChatAttachment(this.icon, this.title, this.onClick);
 }
 
 enum AreaType {
