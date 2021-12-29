@@ -217,6 +217,16 @@ class _ChatPageState extends State<ChatPage> {
           onSendPressed: _handleSendPressed,
           onAudioCompleted: _handleSendAudio,
           user: _user,
+          attachments: [
+            ChatAttachment(Icon(Icons.photo, color: Colors.black,), Text('相册'), () => {}),
+            ChatAttachment(Icon(Icons.camera_alt, color: Colors.black),  Text('拍照'), () => {}),
+            ChatAttachment(Icon(Icons.camera_alt, color: Colors.black),  Text('拍照'), () => {}),
+            ChatAttachment(Icon(Icons.camera_alt, color: Colors.black),  Text('拍照'), () => {}),
+            ChatAttachment(Icon(Icons.camera_alt, color: Colors.black),  Text('拍照'), () => {}),
+            ChatAttachment(Icon(Icons.camera_alt, color: Colors.black),  Text('拍照'), () => {}),
+            ChatAttachment(Icon(Icons.camera_alt, color: Colors.black),  Text('拍照'), () => {}),
+            ChatAttachment(Icon(Icons.camera_alt, color: Colors.black),  Text('拍照'), () => {}),
+          ],
         ),
       ),
     );
