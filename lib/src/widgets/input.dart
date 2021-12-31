@@ -188,7 +188,7 @@ class _InputState extends State<Input> {
                     children: [
                       Row(
                         children: [
-                          if (widget.onAttachmentPressed != null) _leftWidget(),
+                          _leftWidget(),
                           Expanded(
                             child: areaType == AreaType.audio
                                 ? AudioGestureWidget(

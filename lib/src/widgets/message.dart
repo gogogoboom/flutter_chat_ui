@@ -82,7 +82,7 @@ class Message extends StatelessWidget {
   final void Function(types.User)? onAvatarTap;
 
   /// Called when user makes a long press on any message
-  final void Function(types.Message)? onMessageLongPress;
+  final void Function(types.Message, GlobalKey)? onMessageLongPress;
 
   /// Called when user makes a long press on status icon in any message
   final void Function(types.Message)? onMessageStatusLongPress;
@@ -308,7 +308,7 @@ class Message extends StatelessWidget {
       topLeft: Radius.circular(_messageBorderRadius),
       topRight: Radius.circular(_messageBorderRadius),
     );
-
+    var messageKey = GlobalKey();
     return Container(
       alignment:
           _currentUserIsAuthor ? Alignment.centerRight : Alignment.centerLeft,
@@ -329,7 +329,8 @@ class Message extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.end,
               children: [
                 GestureDetector(
-                  onLongPress: () => onMessageLongPress?.call(message),
+                  key: messageKey,
+                  onLongPress: () => onMessageLongPress?.call(message, messageKey),
                   onTap: () {
                     if(message is types.FileMessage) {
                       if((message as types.FileMessage).mimeType?.contains('audio') ?? false) {

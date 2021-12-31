@@ -1,6 +1,6 @@
 
-import 'package:flutter_sound/flutter_sound.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+import 'package:flutter_sound/flutter_sound.dart';
 
 class AudioController {
   

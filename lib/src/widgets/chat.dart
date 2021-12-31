@@ -176,7 +176,7 @@ class Chat extends StatefulWidget {
   final double? onEndReachedThreshold;
 
   /// See [Message.onMessageLongPress]
-  final void Function(types.Message)? onMessageLongPress;
+  final void Function(types.Message, GlobalKey)? onMessageLongPress;
 
   /// See [Message.onMessageStatusLongPress]
   final void Function(types.Message)? onMessageStatusLongPress;
