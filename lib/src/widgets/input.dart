@@ -125,11 +125,11 @@ class _InputState extends State<Input> {
   }
 
   Widget _leftWidget() {
-    return IconButton(
-        onPressed: () {
+    return GestureDetector(
+        onTap: () {
           _doAreaTypeChange(AreaType.audio);
         },
-        icon: Icon(
+        child: Icon(
           areaType != AreaType.audio
               ? Icons.keyboard_voice_outlined
               : Icons.keyboard,
@@ -189,6 +189,7 @@ class _InputState extends State<Input> {
                       Row(
                         children: [
                           _leftWidget(),
+                          SizedBox(width: 12,),
                           Expanded(
                             child: areaType == AreaType.audio
                                 ? AudioGestureWidget(
@@ -239,12 +240,11 @@ class _InputState extends State<Input> {
                                         TextCapitalization.sentences,
                                   ),
                           ),
-                          IconButton(
-                              padding: EdgeInsets.zero,
-                              onPressed: () {
+                          GestureDetector(
+                              onTap: () {
                                 _doAreaTypeChange(AreaType.emoji);
                               },
-                              icon: Icon(
+                              child: Icon(
                                 areaType != AreaType.emoji
                                     ? Icons.emoji_emotions_outlined
                                     : Icons.keyboard,
@@ -292,14 +292,14 @@ class _InputState extends State<Input> {
                                   horizontalSpacing: 0,
                                   initCategory: Category.RECENT,
                                   bgColor: Colors.transparent,
-                                  indicatorColor: Colors.blue,
+                                  indicatorColor: Colors.white,
                                   iconColor: Colors.grey,
-                                  iconColorSelected: Colors.blue,
-                                  progressIndicatorColor: Colors.blue,
-                                  backspaceColor: Colors.blue,
+                                  iconColorSelected: Colors.white,
+                                  progressIndicatorColor: Colors.white,
+                                  backspaceColor: Colors.white,
                                   showRecentsTab: true,
                                   recentsLimit: 28,
-                                  noRecentsText: 'No Recents',
+                                  // noRecentsText: 'No Recents',
                                   noRecentsStyle: const TextStyle(
                                       fontSize: 20, color: Colors.black26),
                                   tabIndicatorAnimDuration: kTabScrollDuration,
@@ -337,7 +337,6 @@ class _InputState extends State<Input> {
     if (next == areaType) {
       _inputFocusNode.requestFocus();
       areaType = AreaType.input;
-      print('areaType相同==> $areaType');
     } else {
       switch (areaType) {
         case AreaType.none:
@@ -354,7 +353,6 @@ class _InputState extends State<Input> {
           break;
       }
       areaType = next;
-      print('areaType ==> $areaType');
       // Future.delayed(Duration(seconds: 1), () {
       //   if(close) {
       //     _inputFocusNode.unfocus();

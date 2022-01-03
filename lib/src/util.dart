@@ -21,6 +21,9 @@ String formatBytes(int size, [int fractionDigits = 2]) {
 Color getUserAvatarNameColor(types.User user, List<Color> colors) =>
     colors[user.id.hashCode % colors.length];
 
+Color getUserNameColor(String name, List<Color> colors) =>
+    colors[name.hashCode % colors.length];
+
 /// Returns user initials (can have only first letter of firstName/lastName or both)
 String getUserInitials(types.User user) {
   String initials = '';
