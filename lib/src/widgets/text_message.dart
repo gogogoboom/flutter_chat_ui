@@ -116,7 +116,7 @@ class TextMessage extends StatelessWidget {
               style: theme.userNameTextStyle.copyWith(color: color),
             ),
           ),
-        SelectableText(
+        Text(
           message.text,
           style: user.id == message.author.id
               ? enlargeEmojis

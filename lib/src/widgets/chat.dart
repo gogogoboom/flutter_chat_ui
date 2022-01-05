@@ -8,8 +8,9 @@ import 'package:flutter_chat_ui/src/widgets/audio_wave_widget.dart';
 import 'package:flutter_chat_ui/src/widgets/inherited_l10n.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:intl/intl.dart';
+import 'package:logger/logger.dart' show Level;
 import 'package:photo_view/photo_view_gallery.dart';
-import 'package:spring/spring.dart';
+import 'package:shake_animation_widget/shake_animation_widget.dart';
 
 import '../chat_l10n.dart';
 import '../chat_theme.dart';
@@ -25,7 +26,6 @@ import 'inherited_chat_theme.dart';
 import 'inherited_user.dart';
 import 'input.dart';
 import 'message.dart';
-import 'package:logger/logger.dart' show Level;
 
 /// Entry widget, represents the complete chat. If you wrap it in [SafeArea] and
 /// it should be full screen, set [SafeArea]'s `bottom` to `false`.
@@ -75,7 +75,7 @@ class Chat extends StatefulWidget {
     this.usePreviewData = true,
     required this.user,
     this.attachments,
-    this.shakeController,
+    this.shakeAnimationController,
   }) : super(key: key);
 
   /// See [Message.bubbleBuilder]
@@ -243,7 +243,7 @@ class Chat extends StatefulWidget {
   /// See [InheritedUser.user]
   final types.User user;
 
-  final SpringController? shakeController;
+  final ShakeAnimationController? shakeAnimationController;
 
   @override
   _ChatState createState() => _ChatState();
@@ -258,7 +258,8 @@ class _ChatState extends State<Chat> {
   bool _isAudioHanding = false;
   bool _isOverflow = false;
   final FlutterSoundPlayer _mPlayer = FlutterSoundPlayer(logLevel: Level.error);
-  final FlutterSoundRecorder _record = FlutterSoundRecorder(logLevel: Level.error);
+  final FlutterSoundRecorder _record =
+      FlutterSoundRecorder(logLevel: Level.error);
   final AudioController audioController = AudioController();
 
   @override
@@ -460,8 +461,18 @@ class _ChatState extends State<Chat> {
                 child: Column(
                   children: [
                     Flexible(
-                        child: Spring.shake(
-                      springController: widget.shakeController ?? SpringController(initialAnim: Motion.pause),
+                        child: ShakeAnimationWidget(
+                      shakeAnimationController:
+                          widget.shakeAnimationController ??
+                              ShakeAnimationController(),
+                      //微旋转的抖动
+                      shakeAnimationType: ShakeAnimationType.SkewShake,
+                      //设置不开启抖动
+                      isForward: false,
+                      //默认为 0 无限执行
+                      shakeCount: 1,
+                      //抖动的幅度 取值范围为[0,1]
+                      shakeRange: 0.6,
                       child: widget.messages.isEmpty
                           ? SizedBox.expand(
                               child: _emptyStateBuilder(),
