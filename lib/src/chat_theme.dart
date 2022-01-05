@@ -279,8 +279,8 @@ class DefaultChatTheme extends ChatTheme {
       height: 1.5,
     ),
     double messageBorderRadius = 20,
-    double messageInsetsHorizontal = 20,
-    double messageInsetsVertical = 16,
+    double messageInsetsHorizontal = 12,
+    double messageInsetsVertical = 8,
     Color primaryColor = primary,
     TextStyle receivedEmojiMessageTextStyle = const TextStyle(fontSize: 40),
     TextStyle receivedMessageBodyTextStyle = const TextStyle(
