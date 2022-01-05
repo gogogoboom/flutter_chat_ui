@@ -15,3 +15,4 @@ export 'src/widgets/message.dart';
 export 'src/widgets/send_button.dart';
 export 'src/widgets/text_message.dart';
 export 'src/widgets/audio_message.dart';
+export 'package:spring/spring.dart';

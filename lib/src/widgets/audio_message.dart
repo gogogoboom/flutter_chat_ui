@@ -16,6 +16,7 @@ class AudioMessage extends StatefulWidget {
     required this.message,
     required this.showName,
     required this.audioController,
+    required this.currentUserIsAuthor,
   }) : super(key: key);
 
   final types.FileMessage message;
@@ -25,21 +26,22 @@ class AudioMessage extends StatefulWidget {
 
   final AudioController audioController;
 
+  final bool currentUserIsAuthor;
+
   @override
   State<StatefulWidget> createState() => _AudioMessageState();
 }
 
 class _AudioMessageState extends State<AudioMessage> {
-
   late Function(String?, PlayerState) callback;
 
   Widget _audioWidgetBuilder(
-      types.User user,
-      BuildContext context,
-      ) {
+    types.User user,
+    BuildContext context,
+  ) {
     final theme = InheritedChatTheme.of(context).theme;
-    final color =
-    getUserAvatarNameColor(widget.message.author, theme.userAvatarNameColors);
+    final color = getUserAvatarNameColor(
+        widget.message.author, theme.userAvatarNameColors);
     final name = getUserName(widget.message.author);
     num seconds = max(1, widget.message.size);
     return Column(
@@ -67,8 +69,10 @@ class _AudioMessageState extends State<AudioMessage> {
             const Spacer(),
             Visibility(
                 visible: _showWave(),
-                child: const SpinKitWave(
-                  color: Colors.white,
+                child: SpinKitWave(
+                  color: widget.currentUserIsAuthor
+                      ? Colors.white
+                      : InheritedChatTheme.of(context).theme.primaryColor,
                   size: 10,
                   itemCount: 3,
                   type: SpinKitWaveType.center,
@@ -82,9 +86,8 @@ class _AudioMessageState extends State<AudioMessage> {
   @override
   void initState() {
     callback = (uri, playState) {
-      if(mounted) {
-        setState(() {
-        });
+      if (mounted) {
+        setState(() {});
       }
     };
     widget.audioController.addAudioListener(widget.message.uri, callback);
@@ -115,5 +118,4 @@ class _AudioMessageState extends State<AudioMessage> {
   bool _showWave() {
     return widget.audioController.isPlaying(widget.message.uri);
   }
-
 }

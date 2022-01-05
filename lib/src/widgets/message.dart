@@ -3,6 +3,7 @@ import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_ui/src/widgets/audio_controller.dart';
 import 'package:flutter_sound/flutter_sound.dart';
+
 import '../models/emoji_enlargement_behavior.dart';
 import '../util.dart';
 import 'file_message.dart';
@@ -38,7 +39,9 @@ class Message extends StatelessWidget {
     required this.showStatus,
     required this.showUserAvatars,
     this.textMessageBuilder,
-    required this.usePreviewData, required this.mPlayer, required this.audioController,
+    required this.usePreviewData,
+    required this.mPlayer,
+    required this.audioController,
   }) : super(key: key);
 
   /// Customize the default bubble using this function. `child` is a content
@@ -170,12 +173,12 @@ class Message extends StatelessWidget {
   ) {
     return bubbleBuilder != null
         ? bubbleBuilder!(
-            _messageBuilder(),
+            _messageBuilder(currentUserIsAuthor),
             message: message,
             nextMessageInGroup: roundBorder,
           )
         : enlargeEmojis && hideBackgroundOnEmojiMessages
-            ? _messageBuilder()
+            ? _messageBuilder(currentUserIsAuthor)
             : Container(
                 decoration: BoxDecoration(
                   borderRadius: borderRadius,
@@ -186,12 +189,12 @@ class Message extends StatelessWidget {
                 ),
                 child: ClipRRect(
                   borderRadius: borderRadius,
-                  child: _messageBuilder(),
+                  child: _messageBuilder(currentUserIsAuthor),
                 ),
               );
   }
 
-  Widget _messageBuilder() {
+  Widget _messageBuilder(bool currentUserIsAuthor) {
     switch (message.type) {
       case types.MessageType.custom:
         final customMessage = message as types.CustomMessage;
@@ -200,14 +203,19 @@ class Message extends StatelessWidget {
             : const SizedBox();
       case types.MessageType.file:
         final fileMessage = message as types.FileMessage;
-        if(fileMessageBuilder != null) {
+        if (fileMessageBuilder != null) {
           return fileMessageBuilder!(fileMessage, messageWidth: messageWidth);
         }
-        switch(fileMessage.mimeType) {
+        switch (fileMessage.mimeType) {
           case 'audio':
           case 'acc':
           case 'audio/x-aac':
-            return AudioMessage(message: fileMessage, showName: showName, audioController: audioController,);
+            return AudioMessage(
+              message: fileMessage,
+              showName: showName,
+              audioController: audioController,
+              currentUserIsAuthor: currentUserIsAuthor,
+            );
           default:
             return FileMessage(message: fileMessage);
         }
@@ -330,11 +338,16 @@ class Message extends StatelessWidget {
               children: [
                 GestureDetector(
                   key: messageKey,
-                  onLongPress: () => onMessageLongPress?.call(message, messageKey),
+                  onLongPress: () =>
+                      onMessageLongPress?.call(message, messageKey),
                   onTap: () {
-                    if(message is types.FileMessage) {
-                      if((message as types.FileMessage).mimeType?.contains('audio') ?? false) {
-                        audioController.togglePlayer(message as types.FileMessage);
+                    if (message is types.FileMessage) {
+                      if ((message as types.FileMessage)
+                              .mimeType
+                              ?.contains('audio') ??
+                          false) {
+                        audioController
+                            .togglePlayer(message as types.FileMessage);
                       }
                     } else {
                       onMessageTap?.call(message);

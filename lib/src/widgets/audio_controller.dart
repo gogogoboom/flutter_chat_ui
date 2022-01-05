@@ -1,6 +1,7 @@
 
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_sound/flutter_sound.dart';
+import 'package:logger/logger.dart' show Level;
 
 class AudioController {
   
@@ -13,7 +14,7 @@ class AudioController {
   bool _mPlayerIsInited = false;
 
   AudioController() {
-    mPlayer = FlutterSoundPlayer();
+    mPlayer = FlutterSoundPlayer(logLevel: Level.error);
     mPlayer.openAudioSession().then((value) {
       _mPlayerIsInited = true;
     });
