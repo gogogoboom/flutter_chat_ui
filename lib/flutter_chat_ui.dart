@@ -16,3 +16,4 @@ export 'src/widgets/send_button.dart';
 export 'src/widgets/text_message.dart';
 export 'src/widgets/audio_message.dart';
 export 'src/widgets/inherited_chat_theme.dart';
+export 'package:flutter_sound/flutter_sound.dart';
