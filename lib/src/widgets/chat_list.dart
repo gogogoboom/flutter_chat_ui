@@ -104,6 +104,8 @@ class _ChatListState extends State<ChatList>
       update.when(
         insert: (pos, count) {
           _listKey.currentState?.insertItem(pos);
+
+          _scrollToBottomIfNeeded(oldList);
         },
         remove: (pos, count) {
           final item = oldList[pos];
@@ -116,8 +118,6 @@ class _ChatListState extends State<ChatList>
         move: (from, to) {},
       );
     }
-
-    _scrollToBottomIfNeeded(oldList);
 
     _oldData = List.from(widget.items);
   }

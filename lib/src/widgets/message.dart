@@ -2,15 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_chat_ui/flutter_chat_ui.dart';
 import 'package:flutter_chat_ui/src/widgets/audio_controller.dart';
-import 'package:flutter_sound/flutter_sound.dart';
 
-import '../models/emoji_enlargement_behavior.dart';
 import '../util.dart';
-import 'file_message.dart';
-import 'image_message.dart';
-import 'inherited_chat_theme.dart';
 import 'inherited_user.dart';
-import 'text_message.dart';
 
 /// Base widget for all message types in the chat. Renders bubbles around
 /// messages and status. Sets maximum width for a message for
@@ -42,6 +36,7 @@ class Message extends StatelessWidget {
     required this.usePreviewData,
     required this.mPlayer,
     required this.audioController,
+    this.onMessageFirePress,
   }) : super(key: key);
 
   /// Customize the default bubble using this function. `child` is a content
@@ -86,6 +81,8 @@ class Message extends StatelessWidget {
 
   /// Called when user makes a long press on any message
   final void Function(types.Message, GlobalKey)? onMessageLongPress;
+
+  final void Function(types.Message, GlobalKey)? onMessageFirePress;
 
   /// Called when user makes a long press on status icon in any message
   final void Function(types.Message)? onMessageStatusLongPress;
@@ -317,6 +314,13 @@ class Message extends StatelessWidget {
       topRight: Radius.circular(_messageBorderRadius),
     );
     var messageKey = GlobalKey();
+    var fireKey = GlobalKey();
+    bool isFireMessage = false;
+    try {
+      isFireMessage = message.metadata?['fireTime'] > 0;
+    } catch (e) {
+      print('fireTime解析失败');
+    }
     return Container(
       alignment:
           _currentUserIsAuthor ? Alignment.centerRight : Alignment.centerLeft,
@@ -328,6 +332,8 @@ class Message extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
+          if (_currentUserIsAuthor && isFireMessage)
+            _fireWidget(fireKey),
           if (!_currentUserIsAuthor && showUserAvatars) _avatarBuilder(context),
           ConstrainedBox(
             constraints: BoxConstraints(
@@ -375,8 +381,22 @@ class Message extends StatelessWidget {
                     )
                   : null,
             ),
+          if (!_currentUserIsAuthor && isFireMessage)
+            _fireWidget(fireKey)
         ],
       ),
     );
   }
+
+  _fireWidget(GlobalKey key) => GestureDetector(
+    key: key,
+    onTap: () => onMessageFirePress?.call(message, key),
+    child: Image.asset(
+      'assets/icon-fire.png',
+      color: Colors.red,
+      package: 'flutter_chat_ui',
+      width: 24,
+      height: 24,
+    ),
+  );
 }

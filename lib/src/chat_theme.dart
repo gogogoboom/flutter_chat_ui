@@ -266,7 +266,7 @@ class DefaultChatTheme extends ChatTheme {
       top: Radius.circular(20),
     ),
     EdgeInsetsGeometry inputPadding = EdgeInsets.zero,
-    Color inputTextColor = neutral7,
+    Color inputTextColor = neutral0,
     Color? inputTextCursorColor,
     InputDecoration inputTextDecoration = const InputDecoration(
       border: InputBorder.none,

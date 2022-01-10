@@ -76,6 +76,10 @@ class Chat extends StatefulWidget {
     required this.user,
     this.attachments,
     this.shakeAnimationController,
+    this.fireWidget,
+    this.onFirePressed,
+    this.fireNow,
+    this.onMessageFirePress,
   }) : super(key: key);
 
   /// See [Message.bubbleBuilder]
@@ -166,6 +170,8 @@ class Chat extends StatefulWidget {
   /// See [Input.onAttachmentPressed]
   final void Function()? onAttachmentPressed;
 
+  final void Function()? onFirePressed;
+
   /// See [Message.onAvatarTap]
   final void Function(types.User)? onAvatarTap;
 
@@ -180,6 +186,7 @@ class Chat extends StatefulWidget {
 
   /// See [Message.onMessageLongPress]
   final void Function(types.Message, GlobalKey)? onMessageLongPress;
+  final void Function(types.Message, GlobalKey)? onMessageFirePress;
 
   /// See [Message.onMessageStatusLongPress]
   final void Function(types.Message)? onMessageStatusLongPress;
@@ -244,6 +251,10 @@ class Chat extends StatefulWidget {
   final types.User user;
 
   final ShakeAnimationController? shakeAnimationController;
+
+  final Widget? fireWidget;
+
+  final String? fireNow;
 
   @override
   _ChatState createState() => _ChatState();
@@ -394,6 +405,7 @@ class _ChatState extends State<Chat> {
         messageWidth: _messageWidth,
         onAvatarTap: widget.onAvatarTap,
         onMessageLongPress: widget.onMessageLongPress,
+        onMessageFirePress: widget.onMessageFirePress,
         onMessageStatusLongPress: widget.onMessageStatusLongPress,
         onMessageStatusTap: widget.onMessageStatusTap,
         onMessageTap: (tappedMessage) {
@@ -459,15 +471,10 @@ class _ChatState extends State<Chat> {
               Container(
                 // color: widget.theme.backgroundColor,
                 decoration: const BoxDecoration(
-                  gradient: LinearGradient(
-                      colors: [
-                        Color(0XFFE1E2F5),
-                        Color(0xfffee7ed),
-                      ],
-                    begin: Alignment.topCenter,
-                    end: Alignment.bottomCenter
-                  )
-                ),
+                    gradient: LinearGradient(colors: [
+                  Color(0XFFE1E2F5),
+                  Color(0xfffee7ed),
+                ], begin: Alignment.topCenter, end: Alignment.bottomCenter)),
                 child: Column(
                   children: [
                     Flexible(
@@ -526,6 +533,9 @@ class _ChatState extends State<Chat> {
                           recorder: _record,
                           onAudioCompleted: widget.onAudioCompleted,
                           attachments: widget.attachments,
+                          fireWidget: widget.fireWidget,
+                          fireNow: widget.fireNow,
+                          onFirePressed: widget.onFirePressed,
                         ),
                   ],
                 ),

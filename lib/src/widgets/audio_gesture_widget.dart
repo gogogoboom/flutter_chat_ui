@@ -1,11 +1,10 @@
-
 import 'dart:io';
 
-import 'package:flutter/foundation.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_sound/flutter_sound.dart';
 
+import '../../flutter_chat_ui.dart';
 import 'sound_recorder.dart';
 
 // const theSource = AudioSource.microphone;
@@ -14,14 +13,19 @@ class AudioGestureWidget extends StatefulWidget {
   final Function(bool, bool)? onAudioHanding;
   final Function(File, int sec)? onAudioCompleted;
   final FlutterSoundRecorder recorder;
-  const AudioGestureWidget({Key? key, this.onAudioHanding, required this.recorder, required this.onAudioCompleted}) : super(key: key);
+
+  const AudioGestureWidget(
+      {Key? key,
+      this.onAudioHanding,
+      required this.recorder,
+      required this.onAudioCompleted})
+      : super(key: key);
 
   @override
   State<StatefulWidget> createState() => AudioGestureState();
 }
 
 class AudioGestureState extends State<AudioGestureWidget> {
-
   String buttonText = '按住 说话';
   Offset? position;
   Duration? mDuration;
@@ -58,7 +62,7 @@ class AudioGestureState extends State<AudioGestureWidget> {
         });
       },
       onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
-        if((position?.dy ?? 0) - details.globalPosition.dy > 100) {
+        if ((position?.dy ?? 0) - details.globalPosition.dy > 100) {
           isOverflow = true;
           setState(() {
             buttonText = '松开 取消';
@@ -79,8 +83,9 @@ class AudioGestureState extends State<AudioGestureWidget> {
         widget.onAudioHanding?.call(false, isOverflow);
         _mRecorder.toggleRecorder();
         String? filePath = _mRecorder.outFilePath;
-        if(!isOverflow && (filePath?.isNotEmpty ?? false)) {
-          widget.onAudioCompleted?.call(File(filePath!), mDuration?.inSeconds ?? 0);
+        if (!isOverflow && (filePath?.isNotEmpty ?? false)) {
+          widget.onAudioCompleted
+              ?.call(File(filePath!), mDuration?.inSeconds ?? 0);
         } else {
           print('取消发送');
         }
@@ -101,14 +106,18 @@ class AudioGestureState extends State<AudioGestureWidget> {
       },
       child: Container(
         alignment: Alignment.center,
-        child: Text(buttonText, style: TextStyle(color: Colors.white),),
+        child: Text(
+          buttonText,
+          style: TextStyle(
+            color: InheritedChatTheme.of(context).theme.inputTextColor,
+          ),
+        ),
       ),
     );
   }
 }
 
 abstract class AudioGestureCallback {
-
   void onSend();
 
   void onCancel();

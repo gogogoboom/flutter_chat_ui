@@ -9,6 +9,7 @@ import 'package:flutter_sound/flutter_sound.dart';
 import '../models/send_button_visibility_mode.dart';
 import 'attachment_button.dart';
 import 'audio_gesture_widget.dart';
+import 'fire_button.dart';
 import 'inherited_chat_theme.dart';
 import 'inherited_l10n.dart';
 import 'more_button.dart';
@@ -38,10 +39,13 @@ class Input extends StatefulWidget {
     required this.recorder,
     required this.onAudioCompleted,
     required this.attachments,
+    this.fireWidget,
+    this.onFirePressed, this.fireNow,
   }) : super(key: key);
 
   /// See [AttachmentButton.onPressed]
   final void Function()? onAttachmentPressed;
+  final void Function()? onFirePressed;
 
   /// Whether attachment is uploading. Will replace attachment button with a
   /// [CircularProgressIndicator]. Since we don't have libraries for
@@ -66,6 +70,10 @@ class Input extends StatefulWidget {
   final FlutterSoundRecorder recorder;
 
   final List<ChatAttachment>? attachments;
+
+  final Widget? fireWidget;
+
+  final String? fireNow;
 
   /// Controls the visibility behavior of the [SendButton] based on the
   /// [TextField] state inside the [Input] widget.
@@ -133,7 +141,7 @@ class _InputState extends State<Input> {
           areaType != AreaType.audio
               ? Icons.keyboard_voice_outlined
               : Icons.keyboard,
-          color: Colors.white,
+          color: InheritedChatTheme.of(context).theme.inputTextColor,
         ));
   }
 
@@ -188,8 +196,17 @@ class _InputState extends State<Input> {
                     children: [
                       Row(
                         children: [
+                          FireButton(
+                            fireNow: widget.fireNow,
+                            onPressed: () {
+                              // _doAreaTypeChange(AreaType.fire);
+                              widget.onFirePressed?.call();
+                            },
+                          ),
                           _leftWidget(),
-                          SizedBox(width: 12,),
+                          const SizedBox(
+                            width: 12,
+                          ),
                           Expanded(
                             child: areaType == AreaType.audio
                                 ? AudioGestureWidget(
@@ -248,7 +265,9 @@ class _InputState extends State<Input> {
                                 areaType != AreaType.emoji
                                     ? Icons.emoji_emotions_outlined
                                     : Icons.keyboard,
-                                color: Colors.white,
+                                color: InheritedChatTheme.of(context)
+                                    .theme
+                                    .inputTextColor,
                               )),
                           Visibility(
                             visible: !_sendButtonVisible,
@@ -282,7 +301,7 @@ class _InputState extends State<Input> {
                                   (Category category, Emoji emoji) {
                                 _onEmojiSelected(emoji);
                               },
-                              // onBackspacePressed: _onBackspacePressed,
+                              onBackspacePressed: () => onBackspacePressed(),
                               config: Config(
                                   columns: 7,
                                   // Issue: https://github.com/flutter/flutter/issues/28894
@@ -292,16 +311,26 @@ class _InputState extends State<Input> {
                                   horizontalSpacing: 0,
                                   initCategory: Category.RECENT,
                                   bgColor: Colors.transparent,
-                                  indicatorColor: Colors.white,
+                                  indicatorColor: Colors.red,
                                   iconColor: Colors.grey,
-                                  iconColorSelected: Colors.white,
-                                  progressIndicatorColor: Colors.white,
-                                  backspaceColor: Colors.white,
+                                  iconColorSelected:
+                                      InheritedChatTheme.of(context)
+                                          .theme
+                                          .inputTextColor,
+                                  progressIndicatorColor:
+                                      InheritedChatTheme.of(context)
+                                          .theme
+                                          .inputTextColor,
+                                  backspaceColor: InheritedChatTheme.of(context)
+                                      .theme
+                                      .inputTextColor,
                                   showRecentsTab: true,
                                   recentsLimit: 28,
-                                  // noRecentsText: 'No Recents',
-                                  noRecentsStyle: const TextStyle(
-                                      fontSize: 20, color: Colors.black26),
+                                  noRecentsText: '没有最近使用的表情',
+                                  noRecentsStyle: TextStyle(
+                                      fontSize: 20, color: InheritedChatTheme.of(context)
+                                      .theme
+                                      .inputTextColor),
                                   tabIndicatorAnimDuration: kTabScrollDuration,
                                   categoryIcons: const CategoryIcons(),
                                   buttonMode: ButtonMode.CUPERTINO)),
@@ -320,6 +349,13 @@ class _InputState extends State<Input> {
                           ),
                         ),
                       ),
+                      // Offstage(
+                      //   offstage: areaType != AreaType.fire,
+                      //   child: SizedBox(
+                      //     height: keyboardHeight,
+                      //     child: widget.fireWidget,
+                      //   ),
+                      // ),
                     ],
                   ),
                 ),
@@ -351,6 +387,8 @@ class _InputState extends State<Input> {
           break;
         case AreaType.attachment:
           break;
+        // case AreaType.fire:
+        //   break;
       }
       areaType = next;
       // Future.delayed(Duration(seconds: 1), () {
@@ -365,6 +403,15 @@ class _InputState extends State<Input> {
   _onEmojiSelected(Emoji emoji) {
     _textController
       ..text += emoji.emoji
+      ..selection = TextSelection.fromPosition(
+          TextPosition(offset: _textController.text.length));
+  }
+
+  onBackspacePressed() {
+    int length = _textController.text.length;
+    String result = _textController.text.substring(0, length - 1);
+    _textController
+      ..text = result
       ..selection = TextSelection.fromPosition(
           TextPosition(offset: _textController.text.length));
   }
@@ -417,4 +464,5 @@ enum AreaType {
   emoji,
   audio,
   attachment,
+  // fire,
 }
