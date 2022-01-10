@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:bruno/bruno.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart' show rootBundle;
@@ -210,7 +211,11 @@ class _ChatPageState extends State<ChatPage> {
         bottom: false,
         child: Chat(
           messages: _messages,
-          theme: DefaultChatTheme(),
+          theme: DefaultChatTheme(
+            inputBackgroundColor: Colors.white,
+            inputBorderRadius: BorderRadius.all(Radius.zero),
+            inputTextColor: Colors.red
+          ),
           onAttachmentPressed: _handleAtachmentPressed,
           onMessageTap: _handleMessageTap,
           onPreviewDataFetched: _handlePreviewDataFetched,
@@ -227,6 +232,16 @@ class _ChatPageState extends State<ChatPage> {
             ChatAttachment(Icon(Icons.camera_alt, color: Colors.black),  Text('拍照'), () => {}),
             ChatAttachment(Icon(Icons.camera_alt, color: Colors.black),  Text('拍照'), () => {}),
           ],
+          onFirePressed: () {
+            BrnMultiDataPicker(
+              context: context,
+              title: '来源',
+              delegate: Brn1RowDelegate(firstSelectedIndex: 1),
+              confirmClick: (list) {
+                BrnToast.show(list.toString(), context);
+              },
+            ).show();
+          },
         ),
       ),
     );
@@ -243,5 +258,106 @@ class _ChatPageState extends State<ChatPage> {
       uri: file.path,
     );
     _addMessage(message);
+  }
+}
+
+List<Map<String, List>> list = [
+  {
+    'AAA': [
+      {
+        'AAA': ['8', '9']
+      }
+    ]
+  },
+  {
+    'BBB': [
+      {
+        'BBB': ['5', '6']
+      }
+    ]
+  },
+  {
+    'CCC': [
+      {
+        'CCC': ['3', '4']
+      }
+    ]
+  },
+  {
+    'DDD': [
+      {
+        'DDD': ['1', '2']
+      },
+      {
+        'DDD1': ['EEE1', 'EEE2']
+      }
+    ]
+  }
+];
+
+class Brn1RowDelegate implements BrnMultiDataPickerDelegate {
+  int firstSelectedIndex = 0;
+  int secondSelectedIndex = 0;
+  int thirdSelectedIndex = 0;
+
+  Brn1RowDelegate({this.firstSelectedIndex = 0, this.secondSelectedIndex = 0});
+
+  @override
+  int numberOfComponent() {
+    return 1;
+  }
+
+  @override
+  int numberOfRowsInComponent(int component) {
+    if (0 == component) {
+      return list.length;
+    } else if (1 == component) {
+      Map<String, List> secondMap = list[firstSelectedIndex];
+      return secondMap.values.first.length;
+    } else {
+      Map<String, List> secondMap = list[firstSelectedIndex];
+      Map<String, List> thirdMap = secondMap.values.first[secondSelectedIndex];
+      return thirdMap.values.first.length;
+    }
+  }
+
+  @override
+  String titleForRowInComponent(int component, int index) {
+    if (0 == component) {
+      return list[index].keys.first;
+    } else if (1 == component) {
+      Map<String, List> secondMap = list[firstSelectedIndex];
+      List secondList = secondMap.values.first;
+      return secondList[index].keys.first;
+    } else {
+      Map<String, List> secondMap = list[firstSelectedIndex];
+      Map<String, List> thirdMap = secondMap.values.first[secondSelectedIndex];
+      return thirdMap.values.first[index];
+    }
+  }
+
+  @override
+  double? rowHeightForComponent(int component) {
+    return null;
+  }
+
+  @override
+  selectRowInComponent(int component, int row) {
+    if (0 == component) {
+      firstSelectedIndex = row;
+    } else if (1 == component) {
+      secondSelectedIndex = row;
+    } else {
+      thirdSelectedIndex = row;
+      print('_thirdSelectedIndex  is selected to $thirdSelectedIndex');
+    }
+  }
+
+  @override
+  int initSelectedRowForComponent(int component) {
+    if (0 == component) {
+      return firstSelectedIndex;
+    }
+    return 0;
   }
 }
