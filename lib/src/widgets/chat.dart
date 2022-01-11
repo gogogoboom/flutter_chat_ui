@@ -469,13 +469,15 @@ class _ChatState extends State<Chat> {
             children: [
               Container(
                 // color: widget.theme.backgroundColor,
-                decoration: widget.decoration ?? const BoxDecoration(
-                    gradient: LinearGradient(colors: [
-                      Color(0XFFE1E2F5),
-                      Color(0xfffee7ed),
-                    ],
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter)),
+                decoration: widget.decoration
+                    // ?? const BoxDecoration(
+                    // gradient: LinearGradient(colors: [
+                    //   Color(0XFFE1E2F5),
+                    //   Color(0xfffee7ed),
+                    // ],
+                    //     begin: Alignment.topCenter,
+                    //     end: Alignment.bottomCenter))
+                ,
                 child: Column(
                   children: [
                     Flexible(
