@@ -168,13 +168,16 @@ class Message extends StatelessWidget {
     bool currentUserIsAuthor,
     bool enlargeEmojis,
   ) {
+    bool isFiring = false;
+    //正在焚毁的消息不需要去掉背景,同textMessage
+    isFiring = message.metadata?['firing'] ?? false;
     return bubbleBuilder != null
         ? bubbleBuilder!(
             _messageBuilder(currentUserIsAuthor),
             message: message,
             nextMessageInGroup: roundBorder,
           )
-        : enlargeEmojis && hideBackgroundOnEmojiMessages
+        : enlargeEmojis && hideBackgroundOnEmojiMessages && !isFiring
             ? _messageBuilder(currentUserIsAuthor)
             : Container(
                 decoration: BoxDecoration(
@@ -192,6 +195,21 @@ class Message extends StatelessWidget {
   }
 
   Widget _messageBuilder(bool currentUserIsAuthor) {
+    //即将焚毁的消息
+    if(message.metadata?['firing'] ?? false) {
+      return TextMessage(
+        emojiEnlargementBehavior: emojiEnlargementBehavior,
+        hideBackgroundOnEmojiMessages: hideBackgroundOnEmojiMessages,
+        message: types.TextMessage(
+          author: message.author,
+          id: message.id,
+          text:  message.metadata?['fireTip'] ?? '消息已焚'
+        ),
+        onPreviewDataFetched: onPreviewDataFetched,
+        showName: showName,
+        usePreviewData: usePreviewData,
+      );
+    }
     switch (message.type) {
       case types.MessageType.custom:
         final customMessage = message as types.CustomMessage;
@@ -316,8 +334,11 @@ class Message extends StatelessWidget {
     var messageKey = GlobalKey();
     var fireKey = GlobalKey();
     bool isFireMessage = false;
+    bool isFiring = false;
     try {
       isFireMessage = message.metadata?['fireTime'] > 0;
+      //正在焚毁的消息不需要去掉背景,同textMessage
+      isFiring = message.metadata?['firing'] ?? false;
     } catch (e) {
       print('fireTime解析失败');
     }
@@ -332,7 +353,7 @@ class Message extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.end,
         mainAxisSize: MainAxisSize.min,
         children: [
-          if (_currentUserIsAuthor && isFireMessage)
+          if (_currentUserIsAuthor && isFireMessage && !isFiring)
             _fireWidget(fireKey),
           if (!_currentUserIsAuthor && showUserAvatars) _avatarBuilder(context),
           ConstrainedBox(
@@ -381,7 +402,7 @@ class Message extends StatelessWidget {
                     )
                   : null,
             ),
-          if (!_currentUserIsAuthor && isFireMessage)
+          if (!_currentUserIsAuthor && isFireMessage && !isFiring)
             _fireWidget(fireKey)
         ],
       ),
