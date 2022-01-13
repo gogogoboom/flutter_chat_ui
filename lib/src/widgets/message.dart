@@ -36,7 +36,7 @@ class Message extends StatelessWidget {
     required this.usePreviewData,
     required this.mPlayer,
     required this.audioController,
-    this.onMessageFirePress,
+    this.onMessageFirePress, this.onAvatarLongPress,
   }) : super(key: key);
 
   /// Customize the default bubble using this function. `child` is a content
@@ -78,6 +78,7 @@ class Message extends StatelessWidget {
 
   // Called when uses taps on an avatar
   final void Function(types.User)? onAvatarTap;
+  final void Function(types.User)? onAvatarLongPress;
 
   /// Called when user makes a long press on any message
   final void Function(types.Message, GlobalKey)? onMessageLongPress;
@@ -138,6 +139,7 @@ class Message extends StatelessWidget {
         ? Container(
             margin: const EdgeInsets.only(right: 8),
             child: GestureDetector(
+              onLongPress: () => onAvatarLongPress?.call(message.author),
               onTap: () => onAvatarTap?.call(message.author),
               child: CircleAvatar(
                 backgroundColor: hasImage

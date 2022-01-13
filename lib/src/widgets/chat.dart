@@ -80,7 +80,7 @@ class Chat extends StatefulWidget {
     this.onFirePressed,
     this.fireNow,
     this.onMessageFirePress,
-    this.decoration,
+    this.decoration, this.onAvatarLongPress, this.focusNode, this.textEditingController,
   }) : super(key: key);
 
   /// See [Message.bubbleBuilder]
@@ -173,8 +173,12 @@ class Chat extends StatefulWidget {
 
   final void Function()? onFirePressed;
 
+  final FocusNode? focusNode;
+  final TextEditingController? textEditingController;
+
   /// See [Message.onAvatarTap]
   final void Function(types.User)? onAvatarTap;
+  final void Function(types.User)? onAvatarLongPress;
 
   /// Called when user taps on background
   final void Function()? onBackgroundTap;
@@ -405,6 +409,7 @@ class _ChatState extends State<Chat> {
         message: message,
         messageWidth: _messageWidth,
         onAvatarTap: widget.onAvatarTap,
+        onAvatarLongPress: widget.onAvatarLongPress,
         onMessageLongPress: widget.onMessageLongPress,
         onMessageFirePress: widget.onMessageFirePress,
         onMessageStatusLongPress: widget.onMessageStatusLongPress,
@@ -518,6 +523,10 @@ class _ChatState extends State<Chat> {
                             ),
                           ),
                         )),
+                    Container(
+                      height: 1,
+                      color: Colors.grey.shade100,
+                    ),
                     widget.customBottomWidget ??
                         Input(
                           isAttachmentUploading: widget.isAttachmentUploading,
@@ -539,6 +548,8 @@ class _ChatState extends State<Chat> {
                           fireWidget: widget.fireWidget,
                           fireNow: widget.fireNow,
                           onFirePressed: widget.onFirePressed,
+                          focusNode: widget.focusNode,
+                          textEditingController: widget.textEditingController,
                         ),
                   ],
                 ),

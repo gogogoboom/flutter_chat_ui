@@ -40,7 +40,7 @@ class Input extends StatefulWidget {
     required this.onAudioCompleted,
     required this.attachments,
     this.fireWidget,
-    this.onFirePressed, this.fireNow,
+    this.onFirePressed, this.fireNow, this.focusNode, this.textEditingController,
   }) : super(key: key);
 
   /// See [AttachmentButton.onPressed]
@@ -75,6 +75,9 @@ class Input extends StatefulWidget {
 
   final String? fireNow;
 
+  final FocusNode? focusNode;
+  final TextEditingController? textEditingController;
+
   /// Controls the visibility behavior of the [SendButton] based on the
   /// [TextField] state inside the [Input] widget.
   /// Defaults to [SendButtonVisibilityMode.editing].
@@ -86,23 +89,23 @@ class Input extends StatefulWidget {
 
 /// [Input] widget state
 class _InputState extends State<Input> {
-  final _inputFocusNode = FocusNode();
+  late FocusNode _inputFocusNode;
   bool _sendButtonVisible = false;
-  final _textController = TextEditingController();
+  late TextEditingController _textController;
   AreaType areaType = AreaType.none;
   double keyboardHeight = 250;
 
   @override
   void initState() {
     super.initState();
-
+    _textController = widget.textEditingController ??  TextEditingController();
     if (widget.sendButtonVisibilityMode == SendButtonVisibilityMode.editing) {
       _sendButtonVisible = _textController.text.trim() != '';
       _textController.addListener(_handleTextControllerChange);
     } else {
       _sendButtonVisible = true;
     }
-
+    _inputFocusNode = widget.focusNode ??  FocusNode();
     _inputFocusNode.addListener(() {
       if (_inputFocusNode.hasFocus) {
         areaType = AreaType.input;
