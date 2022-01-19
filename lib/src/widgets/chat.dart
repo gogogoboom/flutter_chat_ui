@@ -80,7 +80,7 @@ class Chat extends StatefulWidget {
     this.onFirePressed,
     this.fireNow,
     this.onMessageFirePress,
-    this.decoration, this.onAvatarLongPress, this.focusNode, this.textEditingController,
+    this.decoration, this.onAvatarLongPress, this.focusNode, this.textEditingController, this.headers,
   }) : super(key: key);
 
   /// See [Message.bubbleBuilder]
@@ -229,6 +229,8 @@ class Chat extends StatefulWidget {
   /// Show user names for received messages. Useful for a group chat. Will be
   /// shown only on text messages.
   final bool showUserNames;
+
+  final Map<String, String>? headers;
 
   /// See [Message.textMessageBuilder]
   final Widget Function(
@@ -431,6 +433,7 @@ class _ChatState extends State<Chat> {
         usePreviewData: widget.usePreviewData,
         mPlayer: _mPlayer,
         audioController: audioController,
+        headers: widget.headers,
       );
     }
   }

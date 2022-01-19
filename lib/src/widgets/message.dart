@@ -36,7 +36,7 @@ class Message extends StatelessWidget {
     required this.usePreviewData,
     required this.mPlayer,
     required this.audioController,
-    this.onMessageFirePress, this.onAvatarLongPress,
+    this.onMessageFirePress, this.onAvatarLongPress, this.headers,
   }) : super(key: key);
 
   /// Customize the default bubble using this function. `child` is a content
@@ -116,6 +116,8 @@ class Message extends StatelessWidget {
   final FlutterSoundPlayer mPlayer;
 
   final AudioController audioController;
+
+  final Map<String, String>? headers;
 
   /// Build a text message inside predefined bubble.
   final Widget Function(
@@ -240,7 +242,7 @@ class Message extends StatelessWidget {
         final imageMessage = message as types.ImageMessage;
         return imageMessageBuilder != null
             ? imageMessageBuilder!(imageMessage, messageWidth: messageWidth)
-            : ImageMessage(message: imageMessage, messageWidth: messageWidth);
+            : ImageMessage(message: imageMessage, messageWidth: messageWidth, headers: headers,);
       case types.MessageType.text:
         final textMessage = message as types.TextMessage;
         return textMessageBuilder != null

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
+
 import '../conditional/conditional.dart';
 import '../util.dart';
 import 'inherited_chat_theme.dart';
@@ -15,6 +16,7 @@ class ImageMessage extends StatefulWidget {
     Key? key,
     required this.message,
     required this.messageWidth,
+    this.headers,
   }) : super(key: key);
 
   /// [types.ImageMessage]
@@ -22,6 +24,8 @@ class ImageMessage extends StatefulWidget {
 
   /// Maximum message width
   final int messageWidth;
+
+  final Map<String, String>? headers;
 
   @override
   _ImageMessageState createState() => _ImageMessageState();
@@ -36,7 +40,8 @@ class _ImageMessageState extends State<ImageMessage> {
   @override
   void initState() {
     super.initState();
-    _image = Conditional().getProvider(widget.message.uri);
+    _image =
+        Conditional().getProvider(widget.message.uri, headers: widget.headers);
     _size = Size(widget.message.width ?? 0, widget.message.height ?? 0);
   }
 
