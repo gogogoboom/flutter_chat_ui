@@ -32,6 +32,7 @@ class AudioController {
   }
 
   void _play(String uri) async {
+    print('将要播放的音频 $uri');
     if(!_mPlayerIsInited) {
       return;
     }
@@ -71,4 +72,9 @@ class AudioController {
   }
 
   bool isPlaying(String uri) => mPlayer.isPlaying && playingUri == uri;
+
+  void dispose() {
+    mPlayer.stopPlayer();
+    mPlayer.closeAudioSession();
+  }
 }

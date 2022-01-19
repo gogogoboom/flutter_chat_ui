@@ -14,7 +14,7 @@ class BrowserConditional extends BaseConditional {
   @override
   ImageProvider getProvider(String uri, {Map<String, String>? headers}) {
     if (uri.startsWith('http') || uri.startsWith('blob')) {
-      return NetworkImage(uri);
+      return NetworkImage(uri, headers: headers);
     } else {
       return MemoryImage(kTransparentImage);
     }

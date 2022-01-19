@@ -29,12 +29,14 @@ class AudioGestureState extends State<AudioGestureWidget> {
   String buttonText = '按住 说话';
   Offset? position;
   Duration? mDuration;
-  late final SoundRecorder _mRecorder = SoundRecorder(widget.recorder);
+  late SoundRecorder _mRecorder;
   bool isOverflow = false;
 
   @override
   void initState() {
-    // _mRecorder = SoundRecorder(widget.recorder);
+    _mRecorder = SoundRecorder(widget.recorder, (Duration duration) {
+      mDuration = duration;
+    });
     _mRecorder.init();
     super.initState();
   }
@@ -57,9 +59,10 @@ class AudioGestureState extends State<AudioGestureWidget> {
         position = details.globalPosition;
         widget.onAudioHanding?.call(true, isOverflow);
         _mRecorder.toggleRecorder();
-        widget.recorder.onProgress?.listen((event) {
-          mDuration = event.duration;
-        });
+        // widget.recorder.onProgress?.listen((event) {
+        //   mDuration = event.duration;
+        //   print('录音时长：$event,${event.duration}');
+        // });
       },
       onLongPressMoveUpdate: (LongPressMoveUpdateDetails details) {
         if ((position?.dy ?? 0) - details.globalPosition.dy > 100) {

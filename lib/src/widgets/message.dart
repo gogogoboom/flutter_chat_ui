@@ -265,6 +265,7 @@ class Message extends StatelessWidget {
   }
 
   Widget _statusBuilder(BuildContext context) {
+    print('_statusBuilder: ${message.status}');
     switch (message.status) {
       case types.Status.delivered:
       case types.Status.sent:
@@ -344,7 +345,7 @@ class Message extends StatelessWidget {
       //正在焚毁的消息不需要去掉背景,同textMessage
       isFiring = message.metadata?['firing'] ?? false;
     } catch (e) {
-      print('fireTime解析失败');
+      // print('fireTime解析失败');
     }
     return Container(
       alignment:

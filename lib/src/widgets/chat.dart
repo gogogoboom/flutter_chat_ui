@@ -299,6 +299,7 @@ class _ChatState extends State<Chat> {
   @override
   void dispose() {
     _mPlayer.closeAudioSession();
+    audioController.dispose();
     super.dispose();
   }
 
