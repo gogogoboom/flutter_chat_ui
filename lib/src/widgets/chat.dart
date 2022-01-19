@@ -31,64 +31,69 @@ import 'message.dart';
 /// it should be full screen, set [SafeArea]'s `bottom` to `false`.
 class Chat extends StatefulWidget {
   /// Creates a chat widget
-  const Chat({
-    Key? key,
-    this.bubbleBuilder,
-    this.customBottomWidget,
-    this.customDateHeaderText,
-    this.customMessageBuilder,
-    this.dateFormat,
-    this.dateHeaderThreshold = 900000,
-    this.dateLocale,
-    this.disableImageGallery,
-    this.emojiEnlargementBehavior = EmojiEnlargementBehavior.multi,
-    this.emptyState,
-    this.fileMessageBuilder,
-    this.groupMessagesThreshold = 60000,
-    this.hideBackgroundOnEmojiMessages = true,
-    this.imageMessageBuilder,
-    this.isAttachmentUploading,
-    this.isLastPage,
-    this.l10n = const ChatL10nEn(),
-    required this.messages,
-    this.onAttachmentPressed,
-    this.onAvatarTap,
-    this.onBackgroundTap,
-    this.onEndReached,
-    this.onEndReachedThreshold,
-    this.onMessageLongPress,
-    this.onMessageStatusLongPress,
-    this.onMessageStatusTap,
-    this.onMessageTap,
-    this.onPreviewDataFetched,
-    required this.onSendPressed,
-    this.onTextChanged,
-    this.onTextFieldTap,
-    this.onAudioCompleted,
-    this.scrollPhysics,
-    this.sendButtonVisibilityMode = SendButtonVisibilityMode.editing,
-    this.showUserAvatars = false,
-    this.showUserNames = false,
-    this.textMessageBuilder,
-    this.theme = const DefaultChatTheme(),
-    this.timeFormat,
-    this.usePreviewData = true,
-    required this.user,
-    this.attachments,
-    this.shakeAnimationController,
-    this.fireWidget,
-    this.onFirePressed,
-    this.fireNow,
-    this.onMessageFirePress,
-    this.decoration, this.onAvatarLongPress, this.focusNode, this.textEditingController, this.headers,
-  }) : super(key: key);
+  const Chat(
+      {Key? key,
+      this.bubbleBuilder,
+      this.customBottomWidget,
+      this.customDateHeaderText,
+      this.customMessageBuilder,
+      this.dateFormat,
+      this.dateHeaderThreshold = 900000,
+      this.dateLocale,
+      this.disableImageGallery,
+      this.emojiEnlargementBehavior = EmojiEnlargementBehavior.multi,
+      this.emptyState,
+      this.fileMessageBuilder,
+      this.groupMessagesThreshold = 60000,
+      this.hideBackgroundOnEmojiMessages = true,
+      this.imageMessageBuilder,
+      this.isAttachmentUploading,
+      this.isLastPage,
+      this.l10n = const ChatL10nEn(),
+      required this.messages,
+      this.onAttachmentPressed,
+      this.onAvatarTap,
+      this.onBackgroundTap,
+      this.onEndReached,
+      this.onEndReachedThreshold,
+      this.onMessageLongPress,
+      this.onMessageStatusLongPress,
+      this.onMessageStatusTap,
+      this.onMessageTap,
+      this.onPreviewDataFetched,
+      required this.onSendPressed,
+      this.onTextChanged,
+      this.onTextFieldTap,
+      this.onAudioCompleted,
+      this.scrollPhysics,
+      this.sendButtonVisibilityMode = SendButtonVisibilityMode.editing,
+      this.showUserAvatars = false,
+      this.showUserNames = false,
+      this.textMessageBuilder,
+      this.theme = const DefaultChatTheme(),
+      this.timeFormat,
+      this.usePreviewData = true,
+      required this.user,
+      this.attachments,
+      this.shakeAnimationController,
+      this.fireWidget,
+      this.onFirePressed,
+      this.fireNow,
+      this.onMessageFirePress,
+      this.decoration,
+      this.onAvatarLongPress,
+      this.focusNode,
+      this.textEditingController,
+      this.stateWrapper,
+      this.headers})
+      : super(key: key);
 
   /// See [Message.bubbleBuilder]
   final Widget Function(
-      Widget child, {
-      required types.Message message,
-      required bool nextMessageInGroup,
-      })? bubbleBuilder;
+    Widget child, {
+    required types.Message message,
+    required bool nextMessageInGroup,
+  })? bubbleBuilder;
 
   /// Allows you to replace the default Input widget e.g. if you want to create
   /// a channel view.
@@ -105,7 +110,7 @@ class Chat extends StatefulWidget {
 
   /// See [Message.customMessageBuilder]
   final Widget Function(types.CustomMessage, {required int messageWidth})?
-  customMessageBuilder;
+      customMessageBuilder;
 
   /// Allows you to customize the date format. IMPORTANT: only for the date,
   /// do not return time here. See [timeFormat] to customize the time format.
@@ -138,7 +143,7 @@ class Chat extends StatefulWidget {
 
   /// See [Message.fileMessageBuilder]
   final Widget Function(types.FileMessage, {required int messageWidth})?
-  fileMessageBuilder;
+      fileMessageBuilder;
 
   /// Time (in ms) between two messages when we will visually group them.
   /// Default value is 1 minute, 60000 ms. When time between two messages
@@ -150,7 +155,7 @@ class Chat extends StatefulWidget {
 
   /// See [Message.imageMessageBuilder]
   final Widget Function(types.ImageMessage, {required int messageWidth})?
-  imageMessageBuilder;
+      imageMessageBuilder;
 
   /// See [Input.isAttachmentUploading]
   final bool? isAttachmentUploading;
@@ -204,7 +209,7 @@ class Chat extends StatefulWidget {
 
   /// See [Message.onPreviewDataFetched]
   final void Function(types.TextMessage, types.PreviewData)?
-  onPreviewDataFetched;
+      onPreviewDataFetched;
 
   /// See [Input.onSendPressed]
   final void Function(types.PartialText) onSendPressed;
@@ -234,10 +239,10 @@ class Chat extends StatefulWidget {
 
   /// See [Message.textMessageBuilder]
   final Widget Function(
-      types.TextMessage, {
-      required int messageWidth,
-      required bool showName,
-      })? textMessageBuilder;
+    types.TextMessage, {
+    required int messageWidth,
+    required bool showName,
+  })? textMessageBuilder;
 
   /// Chat theme. Extend [ChatTheme] class to create your own theme or use
   /// existing one, like the [DefaultChatTheme]. You can customize only certain
@@ -265,6 +270,8 @@ class Chat extends StatefulWidget {
 
   final Decoration? decoration;
 
+  final Widget Function(types.Message, Widget child)? stateWrapper;
+
   @override
   _ChatState createState() => _ChatState();
 }
@@ -279,7 +286,7 @@ class _ChatState extends State<Chat> {
   bool _isOverflow = false;
   final FlutterSoundPlayer _mPlayer = FlutterSoundPlayer(logLevel: Level.error);
   final FlutterSoundRecorder _record =
-  FlutterSoundRecorder(logLevel: Level.error);
+      FlutterSoundRecorder(logLevel: Level.error);
   final AudioController audioController = AudioController();
 
   @override
@@ -341,8 +348,8 @@ class _ChatState extends State<Chat> {
           PhotoViewGallery.builder(
             builder: (BuildContext context, int index) =>
                 PhotoViewGalleryPageOptions(
-                  imageProvider: Conditional().getProvider(_gallery[index].uri),
-                ),
+              imageProvider: Conditional().getProvider(_gallery[index].uri),
+            ),
             itemCount: _gallery.length,
             loadingBuilder: (context, event) =>
                 _imageGalleryLoadingBuilder(context, event),
@@ -363,8 +370,10 @@ class _ChatState extends State<Chat> {
     );
   }
 
-  Widget _imageGalleryLoadingBuilder(BuildContext context,
-      ImageChunkEvent? event,) {
+  Widget _imageGalleryLoadingBuilder(
+    BuildContext context,
+    ImageChunkEvent? event,
+  ) {
     return Center(
       child: SizedBox(
         width: 20,
@@ -396,11 +405,10 @@ class _ChatState extends State<Chat> {
       final map = object as Map<String, Object>;
       final message = map['message']! as types.Message;
       final _messageWidth =
-      widget.showUserAvatars && message.author.id != widget.user.id
-          ? min(constraints.maxWidth * 0.72, 440).floor()
-          : min(constraints.maxWidth * 0.78, 440).floor();
-
-      return Message(
+          widget.showUserAvatars && message.author.id != widget.user.id
+              ? min(constraints.maxWidth * 0.72, 440).floor()
+              : min(constraints.maxWidth * 0.78, 440).floor();
+      var msg = Message(
         key: ValueKey(message.id),
         bubbleBuilder: widget.bubbleBuilder,
         customMessageBuilder: widget.customMessageBuilder,
@@ -435,6 +443,9 @@ class _ChatState extends State<Chat> {
         audioController: audioController,
         headers: widget.headers,
       );
+      return widget.stateWrapper == null
+          ? msg
+          : widget.stateWrapper!(message, msg);
     }
   }
 
@@ -447,7 +458,7 @@ class _ChatState extends State<Chat> {
   void _onImagePressed(types.ImageMessage message) {
     setState(() {
       _imageViewIndex = _gallery.indexWhere(
-            (element) => element.id == message.id && element.uri == message.uri,
+        (element) => element.id == message.id && element.uri == message.uri,
       );
       _isImageViewVisible = true;
     });
@@ -459,8 +470,10 @@ class _ChatState extends State<Chat> {
     });
   }
 
-  void _onPreviewDataFetched(types.TextMessage message,
-      types.PreviewData previewData,) {
+  void _onPreviewDataFetched(
+    types.TextMessage message,
+    types.PreviewData previewData,
+  ) {
     widget.onPreviewDataFetched?.call(message, previewData);
   }
 
@@ -478,54 +491,54 @@ class _ChatState extends State<Chat> {
               Container(
                 // color: widget.theme.backgroundColor,
                 decoration: widget.decoration
-                    // ?? const BoxDecoration(
-                    // gradient: LinearGradient(colors: [
-                    //   Color(0XFFE1E2F5),
-                    //   Color(0xfffee7ed),
-                    // ],
-                    //     begin: Alignment.topCenter,
-                    //     end: Alignment.bottomCenter))
+                // ?? const BoxDecoration(
+                // gradient: LinearGradient(colors: [
+                //   Color(0XFFE1E2F5),
+                //   Color(0xfffee7ed),
+                // ],
+                //     begin: Alignment.topCenter,
+                //     end: Alignment.bottomCenter))
                 ,
                 child: Column(
                   children: [
                     Flexible(
                         child: ShakeAnimationWidget(
-                          shakeAnimationController:
+                      shakeAnimationController:
                           widget.shakeAnimationController ??
                               ShakeAnimationController(),
-                          //微旋转的抖动
-                          shakeAnimationType: ShakeAnimationType.SkewShake,
-                          //设置不开启抖动
-                          isForward: false,
-                          //默认为 0 无限执行
-                          shakeCount: 1,
-                          //抖动的幅度 取值范围为[0,1]
-                          shakeRange: 0.6,
-                          child: widget.messages.isEmpty
-                              ? SizedBox.expand(
-                            child: _emptyStateBuilder(),
-                          )
-                              : GestureDetector(
-                            onTap: () {
-                              FocusManager.instance.primaryFocus?.unfocus();
-                              widget.onBackgroundTap?.call();
-                            },
-                            child: LayoutBuilder(
-                              builder: (BuildContext context,
-                                  BoxConstraints constraints) =>
-                                  ChatList(
-                                    isLastPage: widget.isLastPage,
-                                    itemBuilder: (item, index) =>
-                                        _messageBuilder(item, constraints),
-                                    items: _chatMessages,
-                                    onEndReached: widget.onEndReached,
-                                    onEndReachedThreshold:
-                                    widget.onEndReachedThreshold,
-                                    scrollPhysics: widget.scrollPhysics,
-                                  ),
+                      //微旋转的抖动
+                      shakeAnimationType: ShakeAnimationType.SkewShake,
+                      //设置不开启抖动
+                      isForward: false,
+                      //默认为 0 无限执行
+                      shakeCount: 1,
+                      //抖动的幅度 取值范围为[0,1]
+                      shakeRange: 0.6,
+                      child: widget.messages.isEmpty
+                          ? SizedBox.expand(
+                              child: _emptyStateBuilder(),
+                            )
+                          : GestureDetector(
+                              onTap: () {
+                                FocusManager.instance.primaryFocus?.unfocus();
+                                widget.onBackgroundTap?.call();
+                              },
+                              child: LayoutBuilder(
+                                builder: (BuildContext context,
+                                        BoxConstraints constraints) =>
+                                    ChatList(
+                                  isLastPage: widget.isLastPage,
+                                  itemBuilder: (item, index) =>
+                                      _messageBuilder(item, constraints),
+                                  items: _chatMessages,
+                                  onEndReached: widget.onEndReached,
+                                  onEndReachedThreshold:
+                                      widget.onEndReachedThreshold,
+                                  scrollPhysics: widget.scrollPhysics,
+                                ),
+                              ),
                             ),
-                          ),
-                        )),
+                    )),
                     Container(
                       height: 1,
                       color: Colors.grey.shade100,
@@ -544,7 +557,7 @@ class _ChatState extends State<Chat> {
                             });
                           },
                           sendButtonVisibilityMode:
-                          widget.sendButtonVisibilityMode,
+                              widget.sendButtonVisibilityMode,
                           recorder: _record,
                           onAudioCompleted: widget.onAudioCompleted,
                           attachments: widget.attachments,
