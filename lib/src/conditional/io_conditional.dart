@@ -13,6 +13,7 @@ class IOConditional extends BaseConditional {
   /// otherwise uses IO to create File
   @override
   ImageProvider getProvider(String uri, {Map<String, String>? headers}) {
+    print('IOConditional==>${headers}');
     if (uri.startsWith('http')) {
       return NetworkImage(uri, headers: headers);
     } else {

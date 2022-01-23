@@ -1,4 +1,6 @@
 
+import 'dart:io';
+
 import 'package:flutter_chat_types/flutter_chat_types.dart' as types;
 import 'package:flutter_sound/flutter_sound.dart';
 import 'package:logger/logger.dart' show Level;
@@ -36,9 +38,11 @@ class AudioController {
     if(!_mPlayerIsInited) {
       return;
     }
+    File file = File(uri);
+    var uint8list = file.readAsBytesSync();
     await mPlayer.startPlayer(
-        fromURI: uri,
-        codec: Codec.mp3,
+        fromDataBuffer: uint8list,
+        // codec: Codec.aacADTS,
         whenFinished: (){
           shrinkListener();
         }

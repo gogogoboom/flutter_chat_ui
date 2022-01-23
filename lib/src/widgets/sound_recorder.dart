@@ -1,9 +1,11 @@
 import 'dart:io';
 import 'dart:math';
 
-import 'package:flutter_sound/public/flutter_sound_recorder.dart';
+import 'package:flutter_sound_platform_interface/flutter_sound_recorder_platform_interface.dart';
 import 'package:path_provider/path_provider.dart' as pathProvider;
 import 'package:permission_handler/permission_handler.dart';
+
+import '../../flutter_chat_ui.dart';
 
 class SoundRecorder {
   FlutterSoundRecorder? _audioRecorder;
@@ -24,16 +26,16 @@ class SoundRecorder {
 
   Future init() async {
     _audioRecorder = FlutterSoundRecorder();
-    if(Platform.isAndroid) {
+    if (Platform.isAndroid) {
       final status = await Permission.microphone.request();
       if (status != PermissionStatus.granted) {
-        throw RecordingPermissionException(
-            '没有录制语音权限');
+        throw RecordingPermissionException('没有录制语音权限');
       }
     }
     await _audioRecorder?.openAudioSession();
     _isRecorderInitialized = true;
-    await _audioRecorder?.setSubscriptionDuration(const Duration(milliseconds: 50));
+    await _audioRecorder
+        ?.setSubscriptionDuration(const Duration(milliseconds: 50));
     _audioRecorder?.dispositionStream()?.listen((event) {
       onDuration?.call(event.duration);
     });
@@ -50,7 +52,10 @@ class SoundRecorder {
     Directory tempDir = await pathProvider.getTemporaryDirectory();
     String outputPath = '${tempDir.path}/${getRandomString(5)}.aac';
     outFilePath = outputPath;
-    await _audioRecorder?.startRecorder(toFile: outFilePath);
+    await _audioRecorder?.startRecorder(
+        toFile: outFilePath,
+        codec: Codec.aacADTS,
+        audioSource: AudioSource.microphone);
   }
 
   Future _stop() async {

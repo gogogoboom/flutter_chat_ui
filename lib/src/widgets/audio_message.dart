@@ -59,7 +59,7 @@ class _AudioMessageState extends State<AudioMessage> {
           ),
         Row(
           children: [
-            SelectableText(
+            Text(
               '$seconds\'\'',
               style: user.id == widget.message.author.id
                   ? theme.sentMessageBodyTextStyle

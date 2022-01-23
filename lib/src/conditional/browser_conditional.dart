@@ -13,6 +13,7 @@ class BrowserConditional extends BaseConditional {
   /// otherwise returns transparent image
   @override
   ImageProvider getProvider(String uri, {Map<String, String>? headers}) {
+    print('BrowserConditional==>${headers}');
     if (uri.startsWith('http') || uri.startsWith('blob')) {
       return NetworkImage(uri, headers: headers);
     } else {
