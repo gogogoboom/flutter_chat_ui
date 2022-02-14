@@ -380,9 +380,9 @@ class Message extends StatelessWidget {
                           false) {
                         audioController
                             .togglePlayer(message as types.FileMessage);
+                      }else {
+                        onMessageTap?.call(message);
                       }
-                    } else {
-                      onMessageTap?.call(message);
                     }
                   },
                   child: _bubbleBuilder(
