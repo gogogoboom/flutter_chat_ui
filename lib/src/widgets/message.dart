@@ -222,9 +222,9 @@ class Message extends StatelessWidget {
             : const SizedBox();
       case types.MessageType.file:
         final fileMessage = message as types.FileMessage;
-        if (fileMessageBuilder != null) {
-          return fileMessageBuilder!(fileMessage, messageWidth: messageWidth);
-        }
+        // if (fileMessageBuilder != null) {
+        //   return fileMessageBuilder!(fileMessage, messageWidth: messageWidth);
+        // }
         switch (fileMessage.mimeType) {
           case 'audio':
           case 'acc':
@@ -235,6 +235,8 @@ class Message extends StatelessWidget {
               audioController: audioController,
               currentUserIsAuthor: currentUserIsAuthor,
             );
+          case 'video/mp4':
+            return fileMessageBuilder!(fileMessage, messageWidth: messageWidth);
           default:
             return FileMessage(message: fileMessage);
         }
@@ -383,6 +385,8 @@ class Message extends StatelessWidget {
                       }else {
                         onMessageTap?.call(message);
                       }
+                    } else {
+                      onMessageTap?.call(message);
                     }
                   },
                   child: _bubbleBuilder(
