@@ -44,6 +44,7 @@ class Chat extends StatefulWidget {
       this.emojiEnlargementBehavior = EmojiEnlargementBehavior.multi,
       this.emptyState,
       this.fileMessageBuilder,
+      this.videoMessageBuilder,
       this.groupMessagesThreshold = 60000,
       this.hideBackgroundOnEmojiMessages = true,
       this.imageMessageBuilder,
@@ -144,6 +145,9 @@ class Chat extends StatefulWidget {
   /// See [Message.fileMessageBuilder]
   final Widget Function(types.FileMessage, {required int messageWidth})?
       fileMessageBuilder;
+
+  final Widget Function(types.FileMessage, {required int messageWidth})?
+      videoMessageBuilder;
 
   /// Time (in ms) between two messages when we will visually group them.
   /// Default value is 1 minute, 60000 ms. When time between two messages

@@ -17,6 +17,7 @@ class Message extends StatelessWidget {
     this.customMessageBuilder,
     required this.emojiEnlargementBehavior,
     this.fileMessageBuilder,
+    this.videoMessageBuilder,
     required this.hideBackgroundOnEmojiMessages,
     this.imageMessageBuilder,
     required this.message,
@@ -36,7 +37,9 @@ class Message extends StatelessWidget {
     required this.usePreviewData,
     required this.mPlayer,
     required this.audioController,
-    this.onMessageFirePress, this.onAvatarLongPress, this.headers,
+    this.onMessageFirePress,
+    this.onAvatarLongPress,
+    this.headers,
   }) : super(key: key);
 
   /// Customize the default bubble using this function. `child` is a content
@@ -62,6 +65,9 @@ class Message extends StatelessWidget {
   /// Build a file message inside predefined bubble
   final Widget Function(types.FileMessage, {required int messageWidth})?
       fileMessageBuilder;
+
+  final Widget Function(types.FileMessage, {required int messageWidth})?
+      videoMessageBuilder;
 
   /// Hide background for messages containing only emojis.
   final bool hideBackgroundOnEmojiMessages;
@@ -200,15 +206,14 @@ class Message extends StatelessWidget {
 
   Widget _messageBuilder(bool currentUserIsAuthor) {
     //即将焚毁的消息
-    if(message.metadata?['firing'] ?? false) {
+    if (message.metadata?['firing'] ?? false) {
       return TextMessage(
         emojiEnlargementBehavior: emojiEnlargementBehavior,
         hideBackgroundOnEmojiMessages: hideBackgroundOnEmojiMessages,
         message: types.TextMessage(
-          author: message.author,
-          id: message.id,
-          text:  message.metadata?['fireTip'] ?? '消息已焚'
-        ),
+            author: message.author,
+            id: message.id,
+            text: message.metadata?['fireTip'] ?? '消息已焚'),
         onPreviewDataFetched: onPreviewDataFetched,
         showName: showName,
         usePreviewData: usePreviewData,
@@ -236,15 +241,20 @@ class Message extends StatelessWidget {
               currentUserIsAuthor: currentUserIsAuthor,
             );
           case 'video/mp4':
-            return fileMessageBuilder!(fileMessage, messageWidth: messageWidth);
+            return videoMessageBuilder!(fileMessage,
+                messageWidth: messageWidth);
           default:
-            return FileMessage(message: fileMessage);
+            return fileMessageBuilder!(fileMessage, messageWidth: messageWidth);
         }
       case types.MessageType.image:
         final imageMessage = message as types.ImageMessage;
         return imageMessageBuilder != null
             ? imageMessageBuilder!(imageMessage, messageWidth: messageWidth)
-            : ImageMessage(message: imageMessage, messageWidth: messageWidth, headers: headers,);
+            : ImageMessage(
+                message: imageMessage,
+                messageWidth: messageWidth,
+                headers: headers,
+              );
       case types.MessageType.text:
         final textMessage = message as types.TextMessage;
         return textMessageBuilder != null
@@ -382,7 +392,7 @@ class Message extends StatelessWidget {
                           false) {
                         audioController
                             .togglePlayer(message as types.FileMessage);
-                      }else {
+                      } else {
                         onMessageTap?.call(message);
                       }
                     } else {
@@ -419,14 +429,14 @@ class Message extends StatelessWidget {
   }
 
   _fireWidget(GlobalKey key) => GestureDetector(
-    key: key,
-    onTap: () => onMessageFirePress?.call(message, key),
-    child: Image.asset(
-      'assets/icon-fire.png',
-      color: Colors.red,
-      package: 'flutter_chat_ui',
-      width: 24,
-      height: 24,
-    ),
-  );
+        key: key,
+        onTap: () => onMessageFirePress?.call(message, key),
+        child: Image.asset(
+          'assets/icon-fire.png',
+          color: Colors.red,
+          package: 'flutter_chat_ui',
+          width: 24,
+          height: 24,
+        ),
+      );
 }
