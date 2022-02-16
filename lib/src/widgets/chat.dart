@@ -421,6 +421,7 @@ class _ChatState extends State<Chat> {
         fileMessageBuilder: widget.fileMessageBuilder,
         hideBackgroundOnEmojiMessages: widget.hideBackgroundOnEmojiMessages,
         imageMessageBuilder: widget.imageMessageBuilder,
+        videoMessageBuilder: widget.videoMessageBuilder,
         message: message,
         messageWidth: _messageWidth,
         onAvatarTap: widget.onAvatarTap,
