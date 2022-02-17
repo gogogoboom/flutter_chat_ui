@@ -87,7 +87,7 @@ class Chat extends StatefulWidget {
       this.textEditingController,
       this.stateWrapper,
       this.headers,
-        this.downloadAttachment})
+        this.downloadAttachment, this.audioMessageBuilder})
       : super(key: key);
 
   /// See [Message.bubbleBuilder]
@@ -149,6 +149,11 @@ class Chat extends StatefulWidget {
 
   final Widget Function(types.FileMessage, {required int messageWidth})?
       videoMessageBuilder;
+
+  final Widget Function(types.FileMessage,
+      {required int messageWidth,
+      required bool showName,
+      required bool currentUserIsAuthor})? audioMessageBuilder;
 
   /// Time (in ms) between two messages when we will visually group them.
   /// Default value is 1 minute, 60000 ms. When time between two messages
@@ -427,6 +432,7 @@ class _ChatState extends State<Chat> {
         hideBackgroundOnEmojiMessages: widget.hideBackgroundOnEmojiMessages,
         imageMessageBuilder: widget.imageMessageBuilder,
         videoMessageBuilder: widget.videoMessageBuilder,
+        audioMessageBuilder: widget.audioMessageBuilder,
         message: message,
         messageWidth: _messageWidth,
         onAvatarTap: widget.onAvatarTap,

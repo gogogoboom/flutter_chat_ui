@@ -40,6 +40,7 @@ class Message extends StatelessWidget {
     this.onMessageFirePress,
     this.onAvatarLongPress,
     this.headers,
+    this.audioMessageBuilder,
   }) : super(key: key);
 
   /// Customize the default bubble using this function. `child` is a content
@@ -68,6 +69,11 @@ class Message extends StatelessWidget {
 
   final Widget Function(types.FileMessage, {required int messageWidth})?
       videoMessageBuilder;
+
+  final Widget Function(types.FileMessage,
+      {required int messageWidth,
+      required bool showName,
+      required bool currentUserIsAuthor})? audioMessageBuilder;
 
   /// Hide background for messages containing only emojis.
   final bool hideBackgroundOnEmojiMessages;
@@ -234,12 +240,16 @@ class Message extends StatelessWidget {
           case 'audio':
           case 'acc':
           case 'audio/x-aac':
-            return AudioMessage(
-              message: fileMessage,
-              showName: showName,
-              audioController: audioController,
-              currentUserIsAuthor: currentUserIsAuthor,
-            );
+            return audioMessageBuilder!(fileMessage,
+                messageWidth: messageWidth,
+                showName: showName,
+                currentUserIsAuthor: currentUserIsAuthor);
+          // return AudioMessage(
+          //   message: fileMessage,
+          //   showName: showName,
+          //   audioController: audioController,
+          //   currentUserIsAuthor: currentUserIsAuthor,
+          // );
           case 'video/mp4':
             return videoMessageBuilder!(fileMessage,
                 messageWidth: messageWidth);
@@ -385,19 +395,19 @@ class Message extends StatelessWidget {
                   onLongPress: () =>
                       onMessageLongPress?.call(message, messageKey),
                   onTap: () {
-                    if (message is types.FileMessage) {
-                      if ((message as types.FileMessage)
-                              .mimeType
-                              ?.contains('audio') ??
-                          false) {
-                        audioController
-                            .togglePlayer(message as types.FileMessage);
-                      } else {
-                        onMessageTap?.call(message);
-                      }
-                    } else {
+                    // if (message is types.FileMessage) {
+                    //   if ((message as types.FileMessage)
+                    //           .mimeType
+                    //           ?.contains('audio') ??
+                    //       false) {
+                    //     audioController
+                    //         .togglePlayer(message as types.FileMessage);
+                    //   } else {
+                    //     onMessageTap?.call(message);
+                    //   }
+                    // } else {
                       onMessageTap?.call(message);
-                    }
+                    // }
                   },
                   child: _bubbleBuilder(
                     context,

@@ -429,7 +429,7 @@ class _InputState extends State<Input> {
           height: 12,
         ),
         Material(
-          color: Colors.white,
+          color: Colors.grey.shade100,
           borderRadius: const BorderRadius.all(Radius.circular(8)),
           child: InkWell(
             borderRadius: const BorderRadius.all(Radius.circular(8)),
