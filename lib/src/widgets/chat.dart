@@ -86,7 +86,8 @@ class Chat extends StatefulWidget {
       this.focusNode,
       this.textEditingController,
       this.stateWrapper,
-      this.headers})
+      this.headers,
+        this.downloadAttachment})
       : super(key: key);
 
   /// See [Message.bubbleBuilder]
@@ -276,6 +277,8 @@ class Chat extends StatefulWidget {
 
   final Widget Function(types.Message, Widget child)? stateWrapper;
 
+  final Function(types.FileMessage)? downloadAttachment;
+
   @override
   _ChatState createState() => _ChatState();
 }
@@ -291,11 +294,12 @@ class _ChatState extends State<Chat> {
   final FlutterSoundPlayer _mPlayer = FlutterSoundPlayer(logLevel: Level.error);
   final FlutterSoundRecorder _record =
       FlutterSoundRecorder(logLevel: Level.error);
-  final AudioController audioController = AudioController();
+  late final AudioController audioController;
 
   @override
   void initState() {
     super.initState();
+    audioController = AudioController(widget.downloadAttachment);
     _mPlayer.openAudioSession().then((value) {});
     didUpdateWidget(widget);
   }
@@ -306,6 +310,7 @@ class _ChatState extends State<Chat> {
     audioController.dispose();
     super.dispose();
   }
+
 
   @override
   void didUpdateWidget(covariant Chat oldWidget) {

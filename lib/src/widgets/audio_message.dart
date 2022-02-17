@@ -91,6 +91,7 @@ class _AudioMessageState extends State<AudioMessage> {
       }
     };
     widget.audioController.addAudioListener(widget.message.uri, callback);
+    widget.audioController.downloadAttachment?.call(widget.message);
     super.initState();
   }
 

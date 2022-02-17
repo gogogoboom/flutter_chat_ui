@@ -15,7 +15,9 @@ class AudioController {
 
   bool _mPlayerIsInited = false;
 
-  AudioController() {
+  final Function(types.FileMessage)? downloadAttachment;
+
+  AudioController(this.downloadAttachment) {
     mPlayer = FlutterSoundPlayer(logLevel: Level.error);
     mPlayer.openAudioSession().then((value) {
       _mPlayerIsInited = true;
@@ -26,19 +28,24 @@ class AudioController {
     if(mPlayer.isPlaying) {
       _stopPlayer();
       if(message.uri != playingUri) {
-        _play(message.uri);
+        _play(message, message.uri);
       }
     } else {
-      _play(message.uri);
+      _play(message, message.uri);
     }
   }
 
-  void _play(String uri) async {
+  void _play(types.FileMessage msg, String uri) async {
     print('将要播放的音频 $uri');
     if(!_mPlayerIsInited) {
       return;
     }
     File file = File(uri);
+    if(!file.existsSync()) {
+      print('音频文件不存在，开始下载');
+      downloadAttachment?.call(msg);
+      return;
+    }
     var uint8list = file.readAsBytesSync();
     await mPlayer.startPlayer(
         fromDataBuffer: uint8list,
